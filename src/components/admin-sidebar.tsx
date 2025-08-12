@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import Logo from "./logo";
 import { Button } from "./ui/button";
-import { LogOut, Home, Users, BookOpen, Settings, PanelLeft } from "lucide-react";
+import { LogOut, Home, Users, BookOpen, Settings, PanelLeft, LineChart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ const menuItems = [
     { href: '/admin', label: 'Dashboard', icon: Home },
     { href: '/admin/users', label: 'Users', icon: Users },
     { href: '/admin/courses', label: 'Courses', icon: BookOpen },
+    { href: '/admin/analytics', label: 'Analytics', icon: LineChart },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
