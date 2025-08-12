@@ -18,6 +18,8 @@ export const courses: Course[] = [
     mrp: 9999,
     thumbnail: 'https://placehold.co/600x400.png',
     category: 'Web Development',
+    instructor: 'John Doe',
+    durationHours: 25,
     chapters: [
       {
         id: 'chap1',
@@ -99,6 +101,8 @@ export const courses: Course[] = [
     mrp: 5999,
     thumbnail: 'https://placehold.co/600x400.png',
     category: 'Web Design',
+    instructor: 'Jane Smith',
+    durationHours: 18,
     chapters: [
        {
         id: 'chap1_tw',
@@ -120,6 +124,8 @@ export const courses: Course[] = [
     mrp: 11999,
     thumbnail: 'https://placehold.co/600x400.png',
     category: 'Web Development',
+    instructor: 'John Doe',
+    durationHours: 35,
     chapters: [
        {
         id: 'chap1_r',
@@ -139,6 +145,8 @@ export const courses: Course[] = [
     mrp: 14999,
     thumbnail: 'https://placehold.co/600x400.png',
     category: 'Full-stack',
+    instructor: 'Peter Jones',
+    durationHours: 40,
     chapters: [
        {
         id: 'chap1_fb',
@@ -158,6 +166,8 @@ export const courses: Course[] = [
     mrp: 7999,
     thumbnail: 'https://placehold.co/600x400.png',
     category: 'Web Development',
+    instructor: 'Jane Smith',
+    durationHours: 20,
     chapters: [
       {
         id: 'chap1_js',
@@ -177,6 +187,8 @@ export const courses: Course[] = [
     mrp: 9999,
     thumbnail: 'https://placehold.co/600x400.png',
     category: 'Web Design',
+    instructor: 'Emily White',
+    durationHours: 22,
     chapters: [
       {
         id: 'chap1_uiux',

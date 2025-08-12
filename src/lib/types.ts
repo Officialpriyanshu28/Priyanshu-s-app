@@ -9,6 +9,8 @@ export interface Course {
   category: string;
   chapters: Chapter[];
   banner?: string;
+  instructor: string;
+  durationHours: number;
 }
 
 export interface Chapter {
@@ -32,7 +34,7 @@ export interface Banner {
 }
 
 export interface Note {
-  id: string;
+  id:string;
   title: string;
   url: string;
 }
