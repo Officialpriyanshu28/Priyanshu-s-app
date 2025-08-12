@@ -1,49 +1,101 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import CourseCard from '@/components/course-card';
-import { courses } from '@/lib/data';
-import { ArrowRight } from 'lucide-react';
+import {
+  Bell,
+  BookOpen,
+  ClipboardCheck,
+  FileText,
+  HelpCircle,
+  Link2,
+  Calendar,
+  Bot,
+  User,
+} from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+const features = [
+  {
+    title: 'My Courses',
+    href: '/my-courses',
+    icon: BookOpen,
+    description: 'Access your purchased courses.',
+  },
+  {
+    title: 'Notifications',
+    href: '/notifications',
+    icon: Bell,
+    description: 'View your latest notifications.',
+  },
+  {
+    title: 'Profile',
+    href: '/profile',
+    icon: User,
+    description: 'Manage your profile details.',
+  },
+  {
+    title: 'Test',
+    href: '/test',
+    icon: ClipboardCheck,
+    description: 'Take tests to check knowledge.',
+  },
+  {
+    title: 'Time Table',
+    href: '/timetable',
+    icon: Calendar,
+    description: 'Check your class schedule.',
+  },
+  {
+    title: 'PDF Notes',
+    href: '/notes',
+    icon: FileText,
+    description: 'Access all course notes here.',
+  },
+  {
+    title: 'Help',
+    href: '/help',
+    icon: HelpCircle,
+    description: 'Get help and support.',
+  },
+  {
+    title: 'AI Assistant',
+    href: '/ai-assistant',
+    icon: Bot,
+    description: 'Get help from AI assistant.',
+  },
+  {
+    title: 'Social Links',
+    href: '/social',
+    icon: Link2,
+    description: 'Connect with us on social media.',
+  },
+];
 
 export default function Home() {
-  const featuredCourses = courses.slice(0, 4);
-
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="bg-primary/5 text-center py-20 md:py-32">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4">
-            Upskill with Priyanshu's app
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Explore a wide range of courses in technology and design. Start your learning journey today and achieve your goals.
-          </p>
-          <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            <Link href="/courses">
-              Explore Courses <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* Featured Courses Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold font-headline text-center mb-10">
-            Featured Courses
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+    <div className="container mx-auto px-4 py-8 md:px-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline text-3xl">Dashboard</CardTitle>
+          <CardDescription>Welcome back! Here's your dashboard.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {features.map((feature) => (
+              <Link href={feature.href} key={feature.title}>
+                <div className="flex flex-col items-center justify-center p-4 border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors h-full text-center">
+                  <feature.icon className="h-8 w-8 mb-2" />
+                  <p className="font-semibold text-sm">{feature.title}</p>
+                </div>
+              </Link>
             ))}
           </div>
-          <div className="text-center mt-12">
-            <Button asChild variant="outline">
-               <Link href="/courses">View All Courses</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </CardContent>
+      </Card>
     </div>
   );
 }
