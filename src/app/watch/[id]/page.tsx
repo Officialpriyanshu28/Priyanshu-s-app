@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PlayCircle, Lock, FileText, Download } from 'lucide-react';
+import { PlayCircle, Lock, FileText, Download, Bot, User, Send } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -15,11 +15,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import type { Video } from '@/lib/types';
+import { courseAssistant } from '@/ai/flows/courseAssistantFlow';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+
+interface Message {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
 
 export default function WatchPage({ params }: { params: { id: string } }) {
   const course = courses.find((c) => c.id === params.id);
   const [activeVideo, setActiveVideo] = useState<Video | null>(course?.chapters[0]?.videos[0] || null);
   const [activeChapterId, setActiveChapterId] = useState<string | null>(course?.chapters[0]?.id || null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
 
   if (!course) {
     notFound();
@@ -28,11 +43,40 @@ export default function WatchPage({ params }: { params: { id: string } }) {
   const handleVideoSelect = (video: Video, chapterId: string) => {
     setActiveVideo(video);
     setActiveChapterId(chapterId);
+    setMessages([]); // Clear chat history when video changes
   };
   
   const handleContextMenu = (e: React.MouseEvent) => e.preventDefault();
   
   const activeChapter = course.chapters.find(c => c.id === activeChapterId);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || !activeVideo || !activeChapter) return;
+
+    const userMessage: Message = { role: 'user', content: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const assistantResponse = await courseAssistant({
+        courseTitle: course.title,
+        chapterTitle: activeChapter.title,
+        videoTitle: activeVideo.title,
+        question: input,
+      });
+      const assistantMessage: Message = { role: 'assistant', content: assistantResponse };
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
+      const errorMessage: Message = { role: 'assistant', content: "Sorry, I couldn't get a response. Please try again." };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <div className="flex flex-col md:flex-row min-h-[calc(100vh-4rem)]">
@@ -98,6 +142,7 @@ export default function WatchPage({ params }: { params: { id: string } }) {
                 <TabsList>
                     <TabsTrigger value="description">Description</TabsTrigger>
                     <TabsTrigger value="notes">Notes</TabsTrigger>
+                    <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
                 </TabsList>
                 <TabsContent value="description" className="mt-4">
                      <p className="text-muted-foreground">Welcome to the first video! Let's get started.</p>
@@ -123,6 +168,55 @@ export default function WatchPage({ params }: { params: { id: string } }) {
                    ) : (
                     <p className="text-muted-foreground text-center py-8">No notes available for this chapter.</p>
                    )}
+                </TabsContent>
+                 <TabsContent value="ai-assistant" className="mt-4">
+                    <div className="border rounded-lg bg-card h-[500px] flex flex-col">
+                        <ScrollArea className="flex-1 p-4">
+                            <div className="space-y-4">
+                            {messages.map((message, index) => (
+                                <div key={index} className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : '')}>
+                                    {message.role === 'assistant' && (
+                                         <Avatar className="h-8 w-8">
+                                            <AvatarFallback><Bot /></AvatarFallback>
+                                        </Avatar>
+                                    )}
+                                    <div className={cn("p-3 rounded-lg max-w-sm", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                                        <p className="text-sm">{message.content}</p>
+                                    </div>
+                                     {message.role === 'user' && (
+                                         <Avatar className="h-8 w-8">
+                                            <AvatarFallback><User /></AvatarFallback>
+                                        </Avatar>
+                                    )}
+                                </div>
+                            ))}
+                             {isLoading && (
+                                <div className="flex items-start gap-3">
+                                    <Avatar className="h-8 w-8">
+                                        <AvatarFallback><Bot /></AvatarFallback>
+                                    </Avatar>
+                                    <div className="p-3 rounded-lg bg-muted">
+                                        <p className="text-sm">Thinking...</p>
+                                    </div>
+                                </div>
+                            )}
+                            </div>
+                        </ScrollArea>
+                        <div className="p-4 border-t">
+                            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                                <Input 
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder="Ask a question about this video..."
+                                    disabled={isLoading}
+                                    className="flex-1"
+                                />
+                                <Button type="submit" disabled={isLoading || !input.trim()}>
+                                    <Send className="h-4 w-4" />
+                                </Button>
+                            </form>
+                        </div>
+                    </div>
                 </TabsContent>
               </Tabs>
           </div>
