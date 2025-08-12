@@ -24,7 +24,7 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const isAuthenticated = !!user;
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
@@ -92,18 +92,20 @@ export default function Header() {
              )
           })}
         </nav>
-
-        {isAuthenticated ? (
-            <Link href="/profile" passHref>
-              <Button variant="ghost" size="icon">
-                <User className="h-6 w-6" />
-                <span className="sr-only">Profile</span>
-              </Button>
-            </Link>
-        ) : (
-            <Link href="/auth/login" passHref>
-              <Button>Login</Button>
-            </Link>
+        
+        {!loading && (
+          isAuthenticated ? (
+              <Link href="/profile" passHref>
+                <Button variant="ghost" size="icon">
+                  <User className="h-6 w-6" />
+                  <span className="sr-only">Profile</span>
+                </Button>
+              </Link>
+          ) : (
+              <Link href="/auth/login" passHref>
+                <Button>Login</Button>
+              </Link>
+          )
         )}
       </div>
     </header>

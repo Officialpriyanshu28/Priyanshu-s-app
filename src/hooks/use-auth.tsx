@@ -11,7 +11,6 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { Skeleton } from '@/components/ui/skeleton';
 
 interface AppUser {
   uid: string;
@@ -41,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (userDoc.exists()) {
       setUser({ uid: firebaseUser.uid, ...userDoc.data() } as AppUser);
     } else {
-      // Fallback if user doc doesn't exist for some reason
+      // This is a fallback in case the user doc wasn't created on signup
       setUser({ 
         uid: firebaseUser.uid, 
         email: firebaseUser.email, 
@@ -54,6 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
       if (firebaseUser) {
         await fetchUserData(firebaseUser);
       } else {
@@ -66,21 +66,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, name: string, phone: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    const firebaseUser = userCredential.user;
     
     // Create user document in Firestore
-    const userDocRef = doc(db, 'users', user.uid);
-    await setDoc(userDocRef, {
+    const userDocRef = doc(db, 'users', firebaseUser.uid);
+    const newUser = {
       name: name,
       email: email,
       phone: phone,
-      role: 'Student', // Default role
+      role: 'Student', // Default role for new sign-ups
       joined: new Date().toISOString(),
-      avatar: `https://i.pravatar.cc/150?u=${user.uid}` // Generic avatar
-    });
+      avatar: `https://i.pravatar.cc/150?u=${firebaseUser.uid}`
+    };
+    await setDoc(userDocRef, newUser);
     
-    // Fetch and set user data in context
-    await fetchUserData(user);
+    // Set user in state immediately after signup
+    setUser({ uid: firebaseUser.uid, ...newUser } as AppUser);
     
     return userCredential;
   };
@@ -103,7 +104,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={value}>
-        {/* We can show a full-page loader here if we want */}
       {children}
     </AuthContext.Provider>
   );

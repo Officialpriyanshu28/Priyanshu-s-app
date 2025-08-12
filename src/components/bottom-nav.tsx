@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/use-auth';
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const isAuthenticated = !!user;
 
   const navItems = [
@@ -20,6 +20,10 @@ export default function BottomNav() {
       ? [{ href: '/profile', label: 'Profile', icon: User }]
       : [{ href: '/auth/login', label: 'Login', icon: LogIn }])
   ];
+  
+  if (loading) {
+    return null; // Don't render nav while checking auth state
+  }
 
   return (
     <nav className="fixed bottom-0 z-50 w-full border-t bg-card shadow-t-sm md:hidden">
