@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, ExternalLink } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,7 +63,10 @@ export default function AdminCoursesPage() {
                 <TableRow key={course.id}>
                   <TableCell className="font-medium flex items-center gap-3">
                     <Image src={course.thumbnail} alt={course.title} width={60} height={40} className="rounded-md object-cover" data-ai-hint="course thumbnail" />
-                    <p>{course.title}</p>
+                     <Link href={`/admin/courses/${course.id}`} className="hover:underline flex items-center gap-2">
+                        {course.title}
+                        <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                     </Link>
                   </TableCell>
                   <TableCell>{course.instructor}</TableCell>
                    <TableCell>{course.price}</TableCell>
@@ -81,7 +84,10 @@ export default function AdminCoursesPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                            <Link href={`/admin/courses/edit/${course.id}`}>Edit</Link>
+                            <Link href={`/admin/courses/edit/${course.id}`}>Edit Course Info</Link>
+                        </DropdownMenuItem>
+                         <DropdownMenuItem asChild>
+                            <Link href={`/admin/courses/${course.id}`}>Manage Content</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Unpublish</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
