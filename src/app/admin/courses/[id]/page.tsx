@@ -179,12 +179,7 @@ export default function CourseAdminDetailPage() {
   const courseId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   if (!courseId) {
-    return (
-        <div className="space-y-6">
-            <Skeleton className="h-8 w-1/4 mb-4" />
-            <Skeleton className="h-[60vh] w-full" />
-        </div>
-    );
+    notFound();
   }
 
   return <CourseAdminDetailPageClient courseId={courseId} />;
