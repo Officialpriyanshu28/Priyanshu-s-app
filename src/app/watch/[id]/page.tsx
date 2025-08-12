@@ -78,7 +78,13 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 
   const handleDownload = async (url: string, filename: string) => {
     try {
+      // For mock data, we can directly use the provided URL if it's external
+      // or create a downloadable link if it's a local path.
+      // This implementation simulates fetching and downloading.
       const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -88,12 +94,16 @@ function WatchPageClient({ courseId }: { courseId: string }) {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(blobUrl);
+      toast({
+        title: "Download Started",
+        description: `Downloading ${filename}`,
+      });
     } catch (error) {
       console.error("Download failed:", error);
       toast({
         variant: "destructive",
         title: "Download Failed",
-        description: "Could not download the file. Please try again later.",
+        description: `Could not download the file "${filename}". Please try again later.`,
       });
     }
   };
@@ -181,7 +191,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="description" className="mt-4">
-                     <p className="text-muted-foreground">Welcome to the first video! Let's get started.</p>
+                     <p className="text-muted-foreground">This section contains the description for the video: "{activeVideo?.title}". Enhance your learning by following along.</p>
                 </TabsContent>
                 <TabsContent value="notes" className="mt-4">
                    {activeChapter && activeChapter.notes.length > 0 ? (
@@ -198,7 +208,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                              onClick={() => handleDownload(note.url, `${note.title}.pdf`)}
                            >
                                 <Download className="mr-2 h-4 w-4" />
-                                Download
+                                Download PDF
                            </Button>
                         </li>
                       ))}
