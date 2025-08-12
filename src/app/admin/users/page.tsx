@@ -37,7 +37,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   Dialog,
@@ -58,38 +57,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-
-const initialUsers = [
-  {
-    id: 'user-1',
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "Admin",
-    status: "Active",
-    joined: "2023-01-15",
-    avatar: "https://i.pravatar.cc/40?u=a042581f4e29026024d",
-  },
-  {
-    id: 'user-2',
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    role: "Student",
-    status: "Active",
-    joined: "2023-02-20",
-    avatar: "https://i.pravatar.cc/40?u=a042581f4e29026704d",
-  },
-   {
-    id: 'user-3',
-    name: "Bob Johnson",
-    email: "bob.j@example.com",
-    role: "Student",
-    status: "Inactive",
-    joined: "2023-03-10",
-    avatar: "https://i.pravatar.cc/40?u=a042581f4e29026705d",
-  },
-];
-
-type User = typeof initialUsers[0];
+import { users as initialUsers, type User } from "@/lib/data";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState(initialUsers);
@@ -169,7 +137,7 @@ export default function AdminUsersPage() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
                               <DialogTrigger asChild>
-                                  <DropdownMenuItem onSelect={() => setSelectedUser(user)}>
+                                  <DropdownMenuItem onSelect={() => {setSelectedUser(user); setIsEditOpen(true)}}>
                                     Edit Role
                                   </DropdownMenuItem>
                               </DialogTrigger>
@@ -193,7 +161,7 @@ export default function AdminUsersPage() {
                                 <Label htmlFor="role" className="mb-2 block">Role</Label>
                                 <Select defaultValue={selectedUser?.role} onValueChange={(newRole) => {
                                    if (selectedUser) {
-                                     setSelectedUser({...selectedUser, role: newRole});
+                                     handleRoleChange(selectedUser.id, newRole)
                                    }
                                 }}>
                                     <SelectTrigger id="role">
@@ -210,7 +178,6 @@ export default function AdminUsersPage() {
                                   <DialogClose asChild>
                                      <Button variant="outline">Cancel</Button>
                                   </DialogClose>
-                                  <Button onClick={() => handleRoleChange(selectedUser!.id, selectedUser!.role)}>Save Changes</Button>
                               </DialogFooter>
                           </DialogContent>
                           

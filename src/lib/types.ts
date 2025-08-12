@@ -88,3 +88,22 @@ export interface PollRanking {
   name: string;
   timeSeconds: number;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "Admin" | "Student" | "Instructor";
+  status: "Active" | "Inactive";
+  joined: string;
+  avatar: string;
+}
+
+export interface RecentOrder {
+    id: string;
+    userId: string;
+    courseId: string;
+    amount: number;
+    date: string;
+    status: 'Paid' | 'Pending' | 'Failed';
+}

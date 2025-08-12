@@ -16,8 +16,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { DollarSign, Users, BookOpen, ShoppingCart } from "lucide-react";
+import { courses, users, recentOrders } from "@/lib/data";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function AdminDashboard() {
+  const totalRevenue = recentOrders.reduce((sum, order) => sum + order.amount, 0);
+  const totalSales = recentOrders.length;
+
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
@@ -31,9 +36,9 @@ export default function AdminDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹4,52,318.89</div>
+            <div className="text-2xl font-bold">₹{totalRevenue.toLocaleString('en-IN')}</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              Based on {totalSales} sales
             </p>
           </CardContent>
         </Card>
@@ -45,9 +50,9 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
+            <div className="text-2xl font-bold">+{users.length}</div>
             <p className="text-xs text-muted-foreground">
-              +180.1% from last month
+              All registered users
             </p>
           </CardContent>
         </Card>
@@ -57,9 +62,9 @@ export default function AdminDashboard() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+12</div>
+            <div className="text-2xl font-bold">{courses.length}</div>
             <p className="text-xs text-muted-foreground">
-              +19% from last month
+              Available for purchase
             </p>
           </CardContent>
         </Card>
@@ -69,9 +74,9 @@ export default function AdminDashboard() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
+            <div className="text-2xl font-bold">+{totalSales}</div>
             <p className="text-xs text-muted-foreground">
-              +201 since last hour
+              Total courses sold
             </p>
           </CardContent>
         </Card>
@@ -96,34 +101,35 @@ export default function AdminDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>
-                  <div className="font-medium">Liam Johnson</div>
-                  <div className="text-sm text-muted-foreground">
-                    liam@example.com
-                  </div>
-                </TableCell>
-                <TableCell>Next.js 14 Mastery</TableCell>
-                <TableCell>
-                  <Badge>Paid</Badge>
-                </TableCell>
-                <TableCell>2023-10-23</TableCell>
-                <TableCell className="text-right">₹4999.00</TableCell>
-              </TableRow>
-               <TableRow>
-                <TableCell>
-                  <div className="font-medium">Olivia Smith</div>
-                  <div className="text-sm text-muted-foreground">
-                    olivia@example.com
-                  </div>
-                </TableCell>
-                <TableCell>Tailwind CSS for Pros</TableCell>
-                <TableCell>
-                  <Badge>Paid</Badge>
-                </TableCell>
-                <TableCell>2023-10-22</TableCell>
-                <TableCell className="text-right">₹2999.00</TableCell>
-              </TableRow>
+              {recentOrders.map(order => {
+                const user = users.find(u => u.id === order.userId);
+                const course = courses.find(c => c.id === order.courseId);
+
+                return (
+                  <TableRow key={order.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={user?.avatar} alt={user?.name} />
+                          <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="font-medium">{user?.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {user?.email}
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{course?.title}</TableCell>
+                    <TableCell>
+                      <Badge variant={order.status === 'Paid' ? 'default' : 'secondary'}>{order.status}</Badge>
+                    </TableCell>
+                    <TableCell>{order.date}</TableCell>
+                    <TableCell className="text-right">₹{order.amount.toLocaleString('en-IN')}</TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

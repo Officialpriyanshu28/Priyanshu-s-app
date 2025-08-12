@@ -1,5 +1,5 @@
 
-import type { Course, Banner, LiveClass } from './types';
+import type { Course, Banner, LiveClass, User, RecentOrder } from './types';
 
 export const banners: Banner[] = [
   { image: 'https://placehold.co/1600x700.png', alt: 'SkillzUp Banner 1' },
@@ -232,3 +232,69 @@ export const courses: Course[] = [
     ],
   },
 ];
+
+export const users: User[] = [
+  {
+    id: 'user-1',
+    name: "Liam Johnson",
+    email: "liam@example.com",
+    role: "Admin",
+    status: "Active",
+    joined: "2023-01-15",
+    avatar: "https://i.pravatar.cc/40?u=a042581f4e29026024d",
+  },
+  {
+    id: 'user-2',
+    name: "Olivia Smith",
+    email: "olivia@example.com",
+    role: "Student",
+    status: "Active",
+    joined: "2023-02-20",
+    avatar: "https://i.pravatar.cc/40?u=a042581f4e29026704d",
+  },
+   {
+    id: 'user-3',
+    name: "Bob Johnson",
+    email: "bob.j@example.com",
+    role: "Student",
+    status: "Inactive",
+    joined: "2023-03-10",
+    avatar: "https://i.pravatar.cc/40?u=a042581f4e29026705d",
+  },
+   {
+    id: 'user-4',
+    name: "Jane Smith",
+    email: "jane.smith@example.com",
+    role: "Instructor",
+    status: "Active",
+    joined: "2023-03-12",
+    avatar: "https://i.pravatar.cc/40?u=a042581f4e29026706d",
+  },
+];
+
+export const recentOrders: RecentOrder[] = [
+    {
+        id: 'order-1',
+        userId: 'user-1',
+        courseId: 'nextjs-mastery',
+        amount: 4999,
+        date: '2023-10-23',
+        status: 'Paid'
+    },
+    {
+        id: 'order-2',
+        userId: 'user-2',
+        courseId: 'tailwind-css-pro',
+        amount: 2999,
+        date: '2023-10-22',
+        status: 'Paid'
+    },
+     {
+        id: 'order-3',
+        userId: 'user-3',
+        courseId: 'react-deep-dive',
+        amount: 5999,
+        date: '2023-10-21',
+        status: 'Paid'
+    }
+]
