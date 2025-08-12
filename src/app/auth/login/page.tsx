@@ -98,12 +98,12 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" type="text" required />
+                <Label htmlFor="name-signup">Name</Label>
+                <Input id="name-signup" type="text" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" type="tel" required />
+                <Label htmlFor="phone-signup">Phone</Label>
+                <Input id="phone-signup" type="tel" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email-signup">Email</Label>
