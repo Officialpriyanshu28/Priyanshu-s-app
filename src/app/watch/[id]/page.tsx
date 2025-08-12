@@ -30,17 +30,18 @@ interface Message {
     imagePreview?: string;
 }
 
-export default function WatchPage() {
-  const params = useParams();
-  const courseId = Array.isArray(params.id) ? params.id[0] : params.id;
+function WatchPageClient({ courseId }: { courseId: string }) {
   const course = courses.find((c) => c.id === courseId);
   const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const [activeChapterId, setActiveChapterId] = useState<string | null>(null);
 
   useEffect(() => {
     if (course) {
-      setActiveVideo(course.chapters[0]?.videos[0] || null);
-      setActiveChapterId(course.chapters[0]?.id || null);
+      const firstChapter = course.chapters[0];
+      if (firstChapter) {
+        setActiveVideo(firstChapter.videos[0] || null);
+        setActiveChapterId(firstChapter.id);
+      }
     }
   }, [course]);
 
@@ -156,6 +157,28 @@ export default function WatchPage() {
       setIsLoading(false);
     }
   };
+  
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Download Failed",
+        description: "Could not download the file. Please try again later.",
+      });
+    }
+  };
 
 
   return (
@@ -164,7 +187,7 @@ export default function WatchPage() {
         <div className="p-4">
           <h2 className="text-xl font-bold font-headline truncate">{course.title}</h2>
         </div>
-        <Accordion type="single" collapsible defaultValue={`item-${course.chapters[0].id}`} className="w-full">
+        <Accordion type="single" collapsible defaultValue={`item-${course.chapters[0]?.id}`} className="w-full">
           {course.chapters.map((chapter) => (
             <AccordionItem value={`item-${chapter.id}`} key={chapter.id}>
               <AccordionTrigger className="px-4 text-base font-semibold">
@@ -208,6 +231,7 @@ export default function WatchPage() {
                         autoPlay
                         src={activeVideo.url}
                         controlsList="nodownload"
+                        onContextMenu={(e) => e.preventDefault()}
                     >
                         Your browser does not support the video tag.
                     </video>
@@ -254,11 +278,13 @@ export default function WatchPage() {
                               <FileText className="h-5 w-5 text-primary" />
                               <span className="font-medium">{note.title}</span>
                            </div>
-                           <Button asChild variant="outline" size="sm">
-                             <Link href={note.url} target="_blank" download>
+                           <Button 
+                             variant="outline" 
+                             size="sm"
+                             onClick={() => handleDownload(note.url, `${note.title}.pdf`)}
+                           >
                                 <Download className="mr-2 h-4 w-4" />
                                 Download
-                             </Link>
                            </Button>
                         </li>
                       ))}
@@ -351,11 +377,12 @@ export default function WatchPage() {
                                 <PlayCircle className="h-5 w-5 text-primary" />
                                 <span className="font-medium">{activeVideo.title}</span>
                             </div>
-                            <Button asChild variant="outline">
-                                <Link href={activeVideo.url} target="_blank" download>
+                            <Button 
+                                variant="outline"
+                                onClick={() => handleDownload(activeVideo.url, `${activeVideo.title}.mp4`)}
+                            >
                                 <Download className="mr-2 h-4 w-4" />
                                 Download Video
-                                </Link>
                             </Button>
                         </div>
                      ) : (
@@ -367,4 +394,17 @@ export default function WatchPage() {
       </main>
     </div>
   );
+}
+
+
+export default function WatchPage() {
+  const params = useParams();
+  const courseId = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  if (!courseId) {
+    // This can be a loading state or return null
+    return null;
+  }
+  
+  return <WatchPageClient courseId={courseId} />;
 }
