@@ -8,13 +8,38 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import CourseCard from '@/components/course-card';
 import { banners, courses } from '@/lib/data';
 import Image from 'next/image';
+import {
+    Book,
+    PlaySquare,
+    Bell,
+    FileText,
+    ClipboardCheck,
+    CalendarDays,
+    HelpCircle,
+    Link2,
+    Bot,
+    GraduationCap
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+
+const features = [
+  { href: '/courses', label: 'All Courses', icon: GraduationCap, new: false },
+  { href: '/my-courses', label: 'My Courses', icon: PlaySquare, new: false },
+  { href: '/notifications', label: 'Notifications', icon: Bell, new: true },
+  { href: '/notes', label: 'PDF Notes', icon: FileText, new: false },
+  { href: '/test', label: 'Test', icon: ClipboardCheck, new: false },
+  { href: '/timetable', label: 'Time Table', icon: CalendarDays, new: false },
+  { href: '/help', label: 'Help', icon: HelpCircle, new: false },
+  { href: '/social', label: 'Social Links', icon: Link2, new: false },
+  { href: '/ai-assistant', label: 'AI Assistant', icon: Bot, new: false },
+];
+
 
 export default function Home() {
-  const featuredCourses = courses.slice(0, 4);
-
   return (
     <div>
       {/* Hero Section with Carousel */}
@@ -47,37 +72,26 @@ export default function Home() {
       </div>
 
       <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
-        {/* Featured Courses */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold font-headline">
-              Featured Courses
-            </h2>
-            <Button asChild variant="outline">
-              <Link href="/courses">View All</Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {featuredCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+        {/* Features Grid */}
+        <section>
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {features.map(({ href, label, icon: Icon, new: isNew }) => (
+              <Link href={href} key={label} className="block">
+                <Card className="h-full transition-shadow hover:shadow-lg">
+                  <CardContent className="flex flex-col items-center justify-center p-4 text-center aspect-square">
+                    {isNew && (
+                      <Badge className="absolute top-1 right-1 bg-yellow-400 text-black hover:bg-yellow-400/80">
+                        New
+                      </Badge>
+                    )}
+                    <Icon className="h-8 w-8 mb-2 text-primary" />
+                    <span className="text-sm font-medium text-foreground">{label}</span>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </section>
-
-        {/* All Courses */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold font-headline">
-              All Courses
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {courses.map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
-        </section>
-
       </div>
     </div>
   );
