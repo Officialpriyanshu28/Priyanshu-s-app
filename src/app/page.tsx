@@ -14,6 +14,9 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { courses } from '@/lib/data';
+import CourseCard from '@/components/course-card';
+import { Button } from '@/components/ui/button';
 
 const menuItems = [
   { href: '/courses', label: 'All Courses', icon: GraduationCap },
@@ -28,6 +31,8 @@ const menuItems = [
 ];
 
 export default function Home() {
+  const latestCourses = courses.slice(0, 4);
+
   return (
     <div className="container mx-auto px-4 py-8 md:px-6">
       <h1 className="text-3xl md:text-4xl font-bold font-headline mb-8 text-center">
@@ -51,6 +56,22 @@ export default function Home() {
             <p className="mt-2 text-center text-sm font-medium text-foreground">{label}</p>
           </Link>
         ))}
+      </div>
+
+      <div className="mt-16">
+        <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline">
+                Latest Courses
+            </h2>
+             <Button variant="outline" asChild>
+                <Link href="/courses">View All</Link>
+             </Button>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {latestCourses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
+        </div>
       </div>
     </div>
   );
