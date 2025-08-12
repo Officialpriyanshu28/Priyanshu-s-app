@@ -1,5 +1,5 @@
 'use client'
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { courses } from '@/lib/data';
 import {
   Accordion,
@@ -10,7 +10,7 @@ import {
 import { PlayCircle, Lock, FileText, Download, Bot, User, Send, Paperclip } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -28,8 +28,8 @@ interface Message {
     imagePreview?: string;
 }
 
-export default function WatchPage({ params }: { params: { id: string } }) {
-  const course = courses.find((c) => c.id === params.id);
+function WatchPageClient({ courseId }: { courseId: string }) {
+  const course = courses.find((c) => c.id === courseId);
   const [activeVideo, setActiveVideo] = useState<Video | null>(course?.chapters[0]?.videos[0] || null);
   const [activeChapterId, setActiveChapterId] = useState<string | null>(course?.chapters[0]?.id || null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -297,4 +297,16 @@ export default function WatchPage({ params }: { params: { id: string } }) {
       </main>
     </div>
   );
+}
+
+export default function WatchPage() {
+  const params = useParams();
+  const courseId = Array.isArray(params.id) ? params.id[0] : params.id;
+
+  if (!courseId) {
+    // You can render a loading state or return null
+    return null;
+  }
+
+  return <WatchPageClient courseId={courseId} />;
 }
