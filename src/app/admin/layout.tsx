@@ -1,12 +1,22 @@
 
+'use client';
+
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { usePathname } from 'next/navigation';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+    const pathname = usePathname();
+
+    // Do not render admin layout on login page
+    if(pathname.startsWith('/admin/auth')) {
+        return <>{children}</>
+    }
+
   return (
     <SidebarProvider>
         <AdminSidebar />
