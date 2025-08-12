@@ -1,5 +1,7 @@
+
 'use client';
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,11 +15,29 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logo from "@/components/logo";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleAuth = () => {
+  const handleLogin = () => {
+    // Hardcoded admin credentials
+    if (email === 'admin@example.com' && password === 'password') {
+      toast({ title: "Login Successful", description: "Redirecting to admin panel..." });
+      router.push('/admin');
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: "Invalid email or password.",
+      });
+    }
+  };
+
+  const handleSignUp = () => {
     // Mock authentication logic - redirect to verify page
     router.push('/auth/verify');
   }
@@ -42,13 +62,26 @@ export default function LoginPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email-login">Email</Label>
-              <Input id="email-login" type="email" placeholder="m@example.com" required />
+              <Input 
+                id="email-login" 
+                type="email" 
+                placeholder="m@example.com" 
+                required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password-login">Password</Label>
-              <Input id="password-login" type="password" required />
+              <Input 
+                id="password-login" 
+                type="password" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
-            <Button onClick={handleAuth} className="w-full bg-accent hover:bg-accent/90">
+            <Button onClick={handleLogin} className="w-full bg-accent hover:bg-accent/90">
               Login
             </Button>
           </CardContent>
@@ -79,7 +112,7 @@ export default function LoginPage() {
               <Label htmlFor="password-signup">Password</Label>
               <Input id="password-signup" type="password" required />
             </div>
-            <Button onClick={handleAuth} className="w-full bg-accent hover:bg-accent/90">
+            <Button onClick={handleSignUp} className="w-full bg-accent hover:bg-accent/90">
               Sign Up
             </Button>
           </CardContent>
