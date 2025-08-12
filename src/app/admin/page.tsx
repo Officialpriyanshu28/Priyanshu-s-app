@@ -16,9 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { DollarSign, Users, BookOpen, ShoppingCart } from "lucide-react";
-import { courses, users, recentOrders } from "@/lib/data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Bar,
@@ -29,6 +27,12 @@ import {
   Tooltip,
   CartesianGrid
 } from "recharts"
+import { useEffect, useState } from "react";
+import { getCourses } from "@/services/courseService";
+import type { Course, User, RecentOrder } from "@/lib/types";
+import { get, ref } from "firebase/database";
+import { db } from "@/lib/firebase";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const overviewData = [
   { name: "Jan", total: Math.floor(Math.random() * 5000) + 1000 },
@@ -46,8 +50,66 @@ const overviewData = [
 ]
 
 export default function AdminDashboard() {
-  const totalRevenue = recentOrders.reduce((sum, order) => sum + order.amount, 0);
-  const totalSales = recentOrders.length;
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [allOrders, setAllOrders] = useState<RecentOrder[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const coursesData = await getCourses();
+        setCourses(coursesData);
+
+        // Fetch all users
+        const usersRef = ref(db, 'users');
+        const usersSnapshot = await get(usersRef);
+        if (usersSnapshot.exists()) {
+           const usersVal = usersSnapshot.val();
+           setAllUsers(Object.keys(usersVal).map(key => ({ ...usersVal[key], id: key })));
+        }
+
+        // Fetch all orders
+        const ordersRef = ref(db, 'orders');
+        const ordersSnapshot = await get(ordersRef);
+        if(ordersSnapshot.exists()){
+            const ordersData = ordersSnapshot.val();
+            const flattenedOrders = Object.values(ordersData)
+                .flatMap((userOrders: any) => Object.values(userOrders)) as RecentOrder[];
+            setAllOrders(flattenedOrders);
+        }
+
+      } catch (error) {
+        console.error("Failed to fetch dashboard data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  const totalRevenue = allOrders.reduce((sum, order) => sum + order.amount, 0);
+  const totalSales = allOrders.length;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Skeleton className="col-span-4 h-96" />
+          <Skeleton className="col-span-3 h-96" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -90,7 +152,7 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{users.length}</div>
+            <div className="text-2xl font-bold">+{allUsers.length}</div>
             <p className="text-xs text-muted-foreground">
               All registered users
             </p>
@@ -159,8 +221,8 @@ export default function AdminDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {recentOrders.slice(0,5).map(order => {
-                  const user = users.find(u => u.id === order.userId);
+                {allOrders.slice(0,5).map(order => {
+                  const user = allUsers.find(u => u.id === order.userId);
                   const course = courses.find(c => c.id === order.courseId);
 
                   return (
