@@ -261,8 +261,8 @@ export const courses: Course[] = [
 export const users: User[] = [
   {
     id: 'user-1',
-    name: "Priyanshu kumar",
-    email: "kumarikiran91133963@gmail.com",
+    name: "Admin User",
+    email: "admin@example.com",
     role: "Admin",
     status: "Active",
     joined: "2023-01-15",

@@ -25,8 +25,9 @@ export default function AdminLoginPage() {
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    const adminEmail = "kumarikiran91133963@gmail.com";
-    const adminPassword = "Priyanshu9113396384";
+    // Consistent and simplified admin credentials
+    const adminEmail = "admin@example.com";
+    const adminPassword = "admin123";
 
     if (email === adminEmail && password === adminPassword) {
       toast({ title: "Login Successful", description: "Redirecting to admin dashboard..." });
