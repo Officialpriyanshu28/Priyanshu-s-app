@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -39,7 +40,9 @@ export default function AdminCoursesPage() {
                     Manage your courses.
                 </CardDescription>
              </div>
-             <Button>Add New Course</Button>
+             <Button asChild>
+                <Link href="/admin/courses/new">Add New Course</Link>
+             </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -77,7 +80,9 @@ export default function AdminCoursesPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={`/admin/courses/edit/${course.id}`}>Edit</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Unpublish</DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
                       </DropdownMenuContent>
