@@ -22,6 +22,7 @@ const features: Feature[] = [
   { href: '/timetable', label: 'Time Table', iconName: 'CalendarDays', new: false },
   { href: '/help', label: 'Help', iconName: 'HelpCircle', new: false },
   { href: '/social', label: 'Social Links', iconName: 'Link2', new: false },
+  { href: '/admin', label: 'Admin Panel', iconName: 'ShieldCheck', new: true },
   { href: '/#', label: 'Download', iconName: 'Download', new: false },
 ];
 

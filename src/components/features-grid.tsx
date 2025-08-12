@@ -17,6 +17,7 @@ import {
     Download,
     type LucideIcon,
     FilePenLine,
+    ShieldCheck,
 } from 'lucide-react';
 
 const iconMap: { [key: string]: LucideIcon } = {
@@ -31,6 +32,7 @@ const iconMap: { [key: string]: LucideIcon } = {
     HelpCircle,
     Link2,
     Download,
+    ShieldCheck,
 };
 
 export interface Feature {
