@@ -15,8 +15,8 @@ const ptSans = PT_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "SkillzUp",
-  description: "Your next-level learning platform.",
+  title: "Priyanshu's app",
+  description: "A Next.js app built in Firebase Studio.",
 };
 
 export default function RootLayout({
