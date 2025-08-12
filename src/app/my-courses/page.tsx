@@ -23,14 +23,7 @@ export default function MyCoursesPage() {
       {purchasedCourses.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {purchasedCourses.map((course) => (
-            <div key={course.id} className="relative group">
-              <CourseCard course={course} />
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
-                <Button asChild size="lg">
-                  <Link href={`/watch/${course.id}`}>Start Learning</Link>
-                </Button>
-              </div>
-            </div>
+            <CourseCard key={course.id} course={course} isPurchased={true} />
           ))}
         </div>
       ) : (
