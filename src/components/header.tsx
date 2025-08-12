@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Logo from './logo';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -23,6 +24,14 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  // Mock authentication state - assume user is logged in for now
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  useEffect(() => {
+    // This runs only on the client, after hydration
+    setIsAuthenticated(true);
+  }, []);
+
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const isActive = pathname === href;
@@ -90,12 +99,18 @@ export default function Header() {
           })}
         </nav>
 
-        <Link href="/profile" passHref>
-          <Button variant="ghost" size="icon">
-            <User className="h-6 w-6" />
-            <span className="sr-only">Profile</span>
-          </Button>
-        </Link>
+        {isAuthenticated ? (
+            <Link href="/profile" passHref>
+              <Button variant="ghost" size="icon">
+                <User className="h-6 w-6" />
+                <span className="sr-only">Profile</span>
+              </Button>
+            </Link>
+        ) : (
+            <Link href="/auth/login" passHref>
+              <Button variant="ghost">Login</Button>
+            </Link>
+        )}
       </div>
     </header>
   );

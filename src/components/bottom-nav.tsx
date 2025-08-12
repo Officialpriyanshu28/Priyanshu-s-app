@@ -3,18 +3,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, HelpCircle, User } from 'lucide-react';
+import { Home, BookOpen, HelpCircle, User, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const navItems = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/my-courses', label: 'My Courses', icon: BookOpen },
-  { href: '/help', label: 'Help', icon: HelpCircle },
-  { href: '/profile', label: 'Profile', icon: User },
-];
+import { useState, useEffect } from 'react';
 
 export default function BottomNav() {
   const pathname = usePathname();
+  // Mock authentication state - assume user is logged in for now
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // This runs only on the client, after hydration
+    setIsAuthenticated(true);
+  }, []);
+
+  const navItems = [
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/my-courses', label: 'My Courses', icon: BookOpen },
+    { href: '/help', label: 'Help', icon: HelpCircle },
+    ...(isAuthenticated 
+      ? [{ href: '/profile', label: 'Profile', icon: User }]
+      : [{ href: '/auth/login', label: 'Login', icon: LogIn }])
+  ];
 
   return (
     <nav className="fixed bottom-0 z-50 w-full border-t bg-card shadow-t-sm md:hidden">
