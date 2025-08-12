@@ -9,6 +9,7 @@ export const banners: Banner[] = [
 ];
 
 const placeholderVideoUrl = 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+const placeholderPdfUrl = '/notes/sample-notes.pdf';
 
 export const courses: Course[] = [
   {
@@ -30,8 +31,8 @@ export const courses: Course[] = [
           { id: 'vid1_2', title: 'Setting up your environment', duration: '12:15', url: placeholderVideoUrl },
         ],
         notes: [
-          { id: 'note1_1', title: 'Chapter 1 Notes', url: '/notes/sample-notes.pdf' },
-          { id: 'note1_2', title: 'Setup Guide', url: '/notes/sample-notes.pdf' },
+          { id: 'note1_1', title: 'Chapter 1 Notes', url: placeholderPdfUrl },
+          { id: 'note1_2', title: 'Setup Guide', url: placeholderPdfUrl },
         ],
         quiz: {
             id: 'quiz1',
@@ -71,7 +72,7 @@ export const courses: Course[] = [
           { id: 'vid2_2', title: 'Layouts and Pages', duration: '18:45', url: placeholderVideoUrl },
         ],
         notes: [
-           { id: 'note2_1', title: 'Routing Cheatsheet', url: '/notes/sample-notes.pdf' },
+           { id: 'note2_1', title: 'Routing Cheatsheet', url: placeholderPdfUrl },
         ],
         quiz: {
             id: 'quiz2',
@@ -93,6 +94,31 @@ export const courses: Course[] = [
         }
       },
     ],
+    liveClasses: [
+        {
+            id: 'lc-1',
+            title: 'Live Q&A: Next.js App Router',
+            instructor: 'John Doe',
+            dateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+            status: 'upcoming'
+        },
+        {
+            id: 'lc-2',
+            title: 'Deep Dive into Server Components',
+            instructor: 'John Doe',
+            dateTime: new Date().toISOString(),
+            status: 'live'
+        },
+        {
+            id: 'lc-3',
+            title: 'Introduction to Next.js (Recording)',
+            instructor: 'John Doe',
+            dateTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+            status: 'ended',
+            recordingUrl: placeholderVideoUrl,
+            notesUrl: placeholderPdfUrl,
+        }
+    ]
   },
   {
     id: 'tailwind-css-pro',
@@ -112,7 +138,7 @@ export const courses: Course[] = [
           { id: 'vid1_1_tw', title: 'What is Tailwind?', duration: '8:00', url: placeholderVideoUrl },
         ],
         notes: [
-           { id: 'note_tw_1', title: 'Tailwind Cheatsheet', url: '/notes/sample-notes.pdf' },
+           { id: 'note_tw_1', title: 'Tailwind Cheatsheet', url: placeholderPdfUrl },
         ]
       },
     ],
@@ -201,31 +227,4 @@ export const courses: Course[] = [
       },
     ],
   },
-];
-
-export const liveClasses: LiveClass[] = [
-  {
-    id: 'lc-1',
-    title: 'Live Q&A: Next.js App Router',
-    courseTitle: 'Next.js 14 Mastery',
-    instructor: 'John Doe',
-    dateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-    status: 'upcoming'
-  },
-    {
-    id: 'lc-2',
-    title: 'Tailwind CSS Deep Dive',
-    courseTitle: 'Tailwind CSS for Pros',
-    instructor: 'Jane Smith',
-    dateTime: new Date().toISOString(),
-    status: 'live'
-  },
-  {
-    id: 'lc-3',
-    title: 'React Hooks Explained',
-    courseTitle: 'React Deep Dive',
-    instructor: 'John Doe',
-    dateTime: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Yesterday
-    status: 'ended'
-  }
 ];

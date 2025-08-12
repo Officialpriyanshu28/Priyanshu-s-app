@@ -12,6 +12,7 @@ export interface Course {
   banner?: string;
   instructor: string;
   durationHours: number;
+  liveClasses?: LiveClass[];
 }
 
 export interface Chapter {
@@ -63,10 +64,11 @@ export interface Option {
 export interface LiveClass {
   id: string;
   title: string;
-  courseTitle: string;
   instructor: string;
   dateTime: string;
   status: 'upcoming' | 'live' | 'ended';
+  recordingUrl?: string;
+  notesUrl?: string;
 }
 
 export interface Poll {
