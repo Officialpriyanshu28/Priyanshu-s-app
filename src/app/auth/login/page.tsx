@@ -20,21 +20,13 @@ import { useToast } from "@/hooks/use-toast";
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    // Hardcoded admin credentials
-    if (email === 'kumarikiran91133963@gmail.com' && password === 'Priyanshu9113396384') {
-      toast({ title: "Login Successful", description: "Redirecting to admin panel..." });
-      router.push('/admin');
-    } else {
+  
+  const handleStudentLogin = () => {
       toast({
         variant: "destructive",
         title: "Login Failed",
         description: "Invalid email or password.",
       });
-    }
   };
 
   const handleSignUp = () => {
@@ -54,7 +46,7 @@ export default function LoginPage() {
       <TabsContent value="login">
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline">Login</CardTitle>
+            <CardTitle className="font-headline">Student Login</CardTitle>
             <CardDescription>
               Enter your credentials to access your account.
             </CardDescription>
@@ -67,8 +59,6 @@ export default function LoginPage() {
                 type="email" 
                 placeholder="m@example.com" 
                 required 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -77,11 +67,9 @@ export default function LoginPage() {
                 id="password-login" 
                 type="password" 
                 required 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button onClick={handleLogin} className="w-full bg-accent hover:bg-accent/90">
+            <Button onClick={handleStudentLogin} className="w-full bg-accent hover:bg-accent/90">
               Login
             </Button>
           </CardContent>
