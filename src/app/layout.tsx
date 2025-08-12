@@ -15,7 +15,7 @@ const ptSans = PT_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Priyanshu's app",
+  title: "SkillzUp",
   description: "A Next.js app built in Firebase Studio.",
 };
 

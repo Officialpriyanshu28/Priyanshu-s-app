@@ -1,6 +1,6 @@
 
 import { cn } from '@/lib/utils';
-import { Box } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
 
 interface LogoProps {
   className?: string;
@@ -8,7 +8,9 @@ interface LogoProps {
 }
 
 const CustomLogo = ({ className }: { className?: string }) => (
-    <Box className={cn('text-primary', className)} size={28} strokeWidth={1.5} />
+    <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 via-red-400 to-purple-500 p-1", className)}>
+        <GraduationCap className="h-6 w-6 text-white" />
+    </div>
 );
 
 
@@ -22,7 +24,7 @@ export default function Logo({ className, textClassName }: LogoProps) {
           textClassName
         )}
       >
-        Priyanshu's app
+        SkillzUp
       </span>
     </div>
   );
