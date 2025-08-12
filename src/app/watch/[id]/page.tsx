@@ -85,8 +85,6 @@ function WatchPageClient({ courseId }: { courseId: string }) {
     setMessages([]); // Clear chat history when video changes
   };
   
-  const handleContextMenu = (e: React.MouseEvent) => e.preventDefault();
-  
   const activeChapter = course.chapters.find(c => c.id === activeChapterId);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,7 +187,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
       </aside>
 
       <main className="flex-1 p-4 md:p-6">
-          <AspectRatio ratio={16 / 9} className="bg-black rounded-lg overflow-hidden shadow-lg" onContextMenu={handleContextMenu}>
+          <AspectRatio ratio={16 / 9} className="bg-black rounded-lg overflow-hidden shadow-lg">
             <div className="w-full h-full flex items-center justify-center">
                  {activeVideo ? (
                     <video
@@ -197,7 +195,6 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                         key={activeVideo.id}
                         className="w-full h-full"
                         controls
-                        controlsList="nodownload"
                         autoPlay
                         src={activeVideo.url}
                     >
@@ -209,9 +206,19 @@ function WatchPageClient({ courseId }: { courseId: string }) {
             </div>
           </AspectRatio>
           <div className="mt-6">
-              <h1 className="text-2xl md:text-3xl font-bold font-headline">
-                {activeVideo?.title}
-              </h1>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h1 className="text-2xl md:text-3xl font-bold font-headline">
+                    {activeVideo?.title}
+                </h1>
+                {activeVideo && (
+                     <Button asChild variant="outline">
+                        <Link href={activeVideo.url} target="_blank" download>
+                           <Download className="mr-2 h-4 w-4" />
+                           Download Video
+                        </Link>
+                     </Button>
+                )}
+              </div>
               
               <Tabs defaultValue="description" className="mt-4">
                 <TabsList>
