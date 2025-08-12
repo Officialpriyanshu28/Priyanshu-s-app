@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -89,10 +90,10 @@ export default function Header() {
           })}
         </nav>
 
-        <Link href="/profile" passHref>
+        <Link href="/auth/login" passHref>
           <Button variant="ghost" size="icon">
             <User className="h-6 w-6" />
-            <span className="sr-only">Profile</span>
+            <span className="sr-only">Login</span>
           </Button>
         </Link>
       </div>
