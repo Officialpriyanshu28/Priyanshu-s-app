@@ -26,8 +26,8 @@ export default function AdminLoginPage() {
     e.preventDefault(); // Prevent default form submission
     // Default credentials for easy testing.
     // For production, use environment variables for security.
-    const adminEmail = "admin@example.com";
-    const adminPassword = "admin123";
+    const adminEmail = "kumarikiran91133963@gmail.com";
+    const adminPassword = "Priyanshu9113396384";
 
     if (email === adminEmail && password === adminPassword) {
       toast({ title: "Login Successful", description: "Redirecting to admin dashboard..." });

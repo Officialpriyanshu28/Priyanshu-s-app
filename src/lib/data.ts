@@ -261,8 +261,8 @@ export const courses: Course[] = [
 export const users: User[] = [
   {
     id: 'user-1',
-    name: "Liam Johnson",
-    email: "liam@example.com",
+    name: "Priyanshu kumar",
+    email: "kumarikiran91133963@gmail.com",
     role: "Admin",
     status: "Active",
     joined: "2023-01-15",
@@ -316,7 +316,7 @@ export const recentOrders: RecentOrder[] = [
     },
      {
         id: 'order-3',
-        userId: 'user-3',
+        userId: 'user-2',
         courseId: 'react-deep-dive',
         amount: 5999,
         date: '2023-10-21',
