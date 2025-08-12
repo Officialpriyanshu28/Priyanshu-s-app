@@ -1,5 +1,6 @@
 
-import type { Course, Banner } from './types';
+
+import type { Course, Banner, LiveClass } from './types';
 
 export const banners: Banner[] = [
   { image: 'https://placehold.co/1600x700.png', alt: 'SkillzUp Banner 1' },
@@ -200,4 +201,31 @@ export const courses: Course[] = [
       },
     ],
   },
+];
+
+export const liveClasses: LiveClass[] = [
+  {
+    id: 'lc-1',
+    title: 'Live Q&A: Next.js App Router',
+    courseTitle: 'Next.js 14 Mastery',
+    instructor: 'John Doe',
+    dateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+    status: 'upcoming'
+  },
+    {
+    id: 'lc-2',
+    title: 'Tailwind CSS Deep Dive',
+    courseTitle: 'Tailwind CSS for Pros',
+    instructor: 'Jane Smith',
+    dateTime: new Date().toISOString(),
+    status: 'live'
+  },
+  {
+    id: 'lc-3',
+    title: 'React Hooks Explained',
+    courseTitle: 'React Deep Dive',
+    instructor: 'John Doe',
+    dateTime: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Yesterday
+    status: 'ended'
+  }
 ];

@@ -1,4 +1,5 @@
 
+
 export interface Course {
   id: string;
   title: string;
@@ -57,4 +58,30 @@ export interface Question {
 export interface Option {
     id: string;
     text: string;
+}
+
+export interface LiveClass {
+  id: string;
+  title: string;
+  courseTitle: string;
+  instructor: string;
+  dateTime: string;
+  status: 'upcoming' | 'live' | 'ended';
+}
+
+export interface Poll {
+  id: string;
+  question: string;
+  options: PollOption[];
+}
+
+export interface PollOption {
+  id: string;
+  text: string;
+}
+
+export interface PollRanking {
+  rank: number;
+  name: string;
+  timeSeconds: number;
 }

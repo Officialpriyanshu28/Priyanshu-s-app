@@ -1,4 +1,5 @@
 
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +21,8 @@ import {
     HelpCircle,
     Link2,
     Bot,
-    GraduationCap
+    GraduationCap,
+    Radio
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +35,7 @@ const features = [
   { href: '/notes', label: 'PDF Notes', icon: FileText, new: false },
   { href: '/test', label: 'Test', icon: ClipboardCheck, new: false },
   { href: '/timetable', label: 'Time Table', icon: CalendarDays, new: false },
+  { href: '/live-class', label: 'Live Class', icon: Radio, new: true },
   { href: '/help', label: 'Help', icon: HelpCircle, new: false },
   { href: '/social', label: 'Social Links', icon: Link2, new: false },
   { href: '/ai-assistant', label: 'AI Assistant', icon: Bot, new: false },
