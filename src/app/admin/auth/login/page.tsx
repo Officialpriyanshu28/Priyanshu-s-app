@@ -15,8 +15,8 @@ import { Label } from "@/components/ui/label";
 import Logo from "@/components/logo";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { app } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import { Loader2 } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -29,8 +29,6 @@ export default function AdminLoginPage() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    const auth = getAuth(app);
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
