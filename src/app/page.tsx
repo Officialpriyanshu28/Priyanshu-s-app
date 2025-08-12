@@ -7,10 +7,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { banners } from '@/lib/data';
+import { banners, courses } from '@/lib/data';
 import Image from 'next/image';
 import type { Feature } from '@/components/features-grid';
 import FeaturesGrid from '@/components/features-grid';
+import CourseCard from '@/components/course-card';
 
 const features: Feature[] = [
   { href: '/courses', label: 'All Courses', iconName: 'GraduationCap', new: false },
@@ -21,12 +22,12 @@ const features: Feature[] = [
   { href: '/test', label: 'Test', iconName: 'ClipboardCheck', new: false },
   { href: '/timetable', label: 'Time Table', iconName: 'CalendarDays', new: false },
   { href: '/help', label: 'Help', iconName: 'HelpCircle', new: false },
-  { href: '/social', label: 'Social Links', iconName: 'Link2', new: false },
-  { href: '/admin', label: 'Admin Panel', iconName: 'ShieldCheck', new: true },
-  { href: '/#', label: 'Download', iconName: 'Download', new: false },
 ];
 
 export default function Home() {
+    const purchasedCourses = courses.slice(0, 3);
+    const latestCourses = courses.slice(3, 7);
+
   return (
     <div>
       {/* Hero Section with Carousel */}
@@ -59,9 +60,29 @@ export default function Home() {
         </Carousel>
       </div>
 
-      <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
+      <div className="container mx-auto px-4 py-8 md:px-6 md:py-12 space-y-12">
+        {/* Continue Learning */}
+        <section>
+            <h2 className="text-2xl font-bold font-headline mb-4">Continue Learning</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {purchasedCourses.map(course => (
+                    <CourseCard key={course.id} course={course} isPurchased={true} withProgressBar={true}/>
+                ))}
+            </div>
+        </section>
+
         {/* Features Grid */}
         <FeaturesGrid features={features} />
+
+        {/* Latest Courses */}
+        <section>
+            <h2 className="text-2xl font-bold font-headline mb-4">Latest Courses</h2>
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {latestCourses.map(course => (
+                    <CourseCard key={course.id} course={course} />
+                ))}
+            </div>
+        </section>
       </div>
     </div>
   );
