@@ -1,6 +1,6 @@
 
 import { initializeApp, getApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
 
 // Your web app's Firebase configuration
@@ -19,6 +19,12 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getDatabase(app);
+
+const provider = new GoogleAuthProvider();
+
+export const signInWithGoogle = () => {
+  return signInWithPopup(auth, provider);
+};
 
 
 // It's a good practice to export the app instance and other services
