@@ -6,7 +6,7 @@ import Link from "next/link";
 import { courses, liveClasses } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, Radio, Download, Video, ArrowLeft, PlusCircle, Trash2, Edit } from "lucide-react";
+import { ArrowLeft, PlusCircle, Trash2, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -26,7 +26,7 @@ function CourseAdminDetailPageClient({ courseId }: { courseId: string }) {
 
   if (!course) {
      return (
-        <div>
+        <div className="space-y-6">
             <Skeleton className="h-8 w-1/4 mb-4" />
             <Skeleton className="h-[60vh] w-full" />
         </div>
@@ -56,7 +56,9 @@ function CourseAdminDetailPageClient({ courseId }: { courseId: string }) {
       <Card>
         <CardHeader className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div className="flex items-start gap-4">
-                <Image src={course.thumbnail} alt={course.title} width={150} height={100} className="rounded-md object-cover aspect-video" data-ai-hint="course thumbnail" />
+                <div className="relative w-[150px] h-[84px] flex-shrink-0">
+                    <Image src={course.thumbnail} alt={course.title} fill className="rounded-md object-cover" data-ai-hint="course thumbnail" />
+                </div>
                 <div>
                     <Badge variant="outline">{course.category}</Badge>
                     <CardTitle className="mt-1 text-2xl">{course.title}</CardTitle>
@@ -88,7 +90,7 @@ function CourseAdminDetailPageClient({ courseId }: { courseId: string }) {
                 <CardContent className="space-y-4">
                    {course.chapters.map(chapter => (
                     <Card key={chapter.id}>
-                        <CardHeader className="bg-muted/50">
+                        <CardHeader className="bg-muted/50 p-4">
                             <div className="flex justify-between items-center">
                                 <h4 className="font-semibold text-lg">{chapter.title}</h4>
                                 <div className="flex items-center gap-2">
@@ -177,7 +179,12 @@ export default function CourseAdminDetailPage() {
   const courseId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   if (!courseId) {
-    return <p>Loading...</p>;
+    return (
+        <div className="space-y-6">
+            <Skeleton className="h-8 w-1/4 mb-4" />
+            <Skeleton className="h-[60vh] w-full" />
+        </div>
+    );
   }
 
   return <CourseAdminDetailPageClient courseId={courseId} />;
