@@ -1,3 +1,4 @@
+
 export interface Course {
   id: string;
   title: string;
@@ -15,6 +16,7 @@ export interface Chapter {
   title: string;
   videos: Video[];
   notes: Note[];
+  quiz?: Quiz;
 }
 
 export interface Video {
@@ -33,4 +35,24 @@ export interface Note {
   id: string;
   title: string;
   url: string;
+}
+
+export interface Quiz {
+    id: string;
+    title: string;
+    timeLimitMinutes: number;
+    questions: Question[];
+}
+
+export interface Question {
+    id: string;
+    text: string;
+    options: Option[];
+    correctOptionId: string;
+    explanation: string;
+}
+
+export interface Option {
+    id: string;
+    text: string;
 }

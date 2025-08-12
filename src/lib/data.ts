@@ -1,3 +1,4 @@
+
 import type { Course, Banner } from './types';
 
 export const banners: Banner[] = [
@@ -28,7 +29,36 @@ export const courses: Course[] = [
         notes: [
           { id: 'note1_1', title: 'Chapter 1 Notes', url: '/notes/sample-notes.pdf' },
           { id: 'note1_2', title: 'Setup Guide', url: '/notes/sample-notes.pdf' },
-        ]
+        ],
+        quiz: {
+            id: 'quiz1',
+            title: 'Next.js Basics Quiz',
+            timeLimitMinutes: 1,
+            questions: [
+                {
+                    id: 'q1',
+                    text: 'What is the main benefit of using Next.js?',
+                    options: [
+                        { id: 'opt1_1', text: 'Server-Side Rendering' },
+                        { id: 'opt1_2', text: 'Styling with CSS-in-JS' },
+                        { id: 'opt1_3', text: 'Database integration' },
+                    ],
+                    correctOptionId: 'opt1_1',
+                    explanation: 'Next.js provides server-side rendering out of the box, which improves performance and SEO.'
+                },
+                {
+                    id: 'q2',
+                    text: 'What is the file name for a page route in the App Router?',
+                    options: [
+                        { id: 'opt2_1', text: 'index.js' },
+                        { id: 'opt2_2', text: 'page.tsx' },
+                        { id: 'opt2_3', text: 'route.js' },
+                    ],
+                    correctOptionId: 'opt2_2',
+                    explanation: 'In the Next.js App Router, `page.tsx` (or .js) is the special file used to create a UI for a route segment.'
+                }
+            ]
+        }
       },
       {
         id: 'chap2',
@@ -39,7 +69,25 @@ export const courses: Course[] = [
         ],
         notes: [
            { id: 'note2_1', title: 'Routing Cheatsheet', url: '/notes/sample-notes.pdf' },
-        ]
+        ],
+        quiz: {
+            id: 'quiz2',
+            title: 'App Router Quiz',
+            timeLimitMinutes: 2,
+            questions: [
+                 {
+                    id: 'q3',
+                    text: 'What file is used to create a shared layout for a route segment?',
+                    options: [
+                        { id: 'opt3_1', text: 'layout.tsx' },
+                        { id: 'opt3_2', text: 'template.tsx' },
+                        { id: 'opt3_3', text: 'page.tsx' },
+                    ],
+                    correctOptionId: 'opt3_1',
+                    explanation: '`layout.tsx` is the special file that allows you to create a UI that is shared between multiple pages.'
+                }
+            ]
+        }
       },
     ],
   },
