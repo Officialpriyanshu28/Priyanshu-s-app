@@ -17,7 +17,9 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+    minimumCacheTTL: 60,
   },
+  swcMinify: true,
 };
 
 export default nextConfig;

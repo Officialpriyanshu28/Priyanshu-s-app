@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
-import CourseCard from "@/components/course-card";
+import { useState, useMemo, useTransition } from 'react';
 import {
   Select,
   SelectContent,
@@ -14,8 +13,16 @@ import { Input } from '@/components/ui/input';
 import { courses } from "@/lib/data";
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const CourseCard = dynamic(() => import('@/components/course-card'), { 
+  loading: () => <Skeleton className="h-full w-full" />,
+  ssr: false 
+});
 
 export default function CoursesPage() {
+  const [isPending, startTransition] = useTransition();
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
   const [instructor, setInstructor] = useState('all');
@@ -24,6 +31,12 @@ export default function CoursesPage() {
 
   const categories = useMemo(() => Array.from(new Set(courses.map(c => c.category))), []);
   const instructors = useMemo(() => Array.from(new Set(courses.map(c => c.instructor))), []);
+
+  const handleFilterChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (value: string) => {
+    startTransition(() => {
+      setter(value);
+    });
+  };
 
   const filteredCourses = useMemo(() => {
     let filtered = courses
@@ -62,11 +75,13 @@ export default function CoursesPage() {
   }, [searchTerm, category, instructor, priceRange, sortOrder]);
   
   const resetFilters = () => {
-    setSearchTerm('');
-    setCategory('all');
-    setInstructor('all');
-    setPriceRange('all');
-    setSortOrder('latest');
+    startTransition(() => {
+      setSearchTerm('');
+      setCategory('all');
+      setInstructor('all');
+      setPriceRange('all');
+      setSortOrder('latest');
+    });
   };
 
   return (
@@ -80,13 +95,13 @@ export default function CoursesPage() {
           <Input 
             placeholder="Search by course name..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => handleFilterChange(setSearchTerm)(e.target.value)}
             className="pl-10"
           />
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
         </div>
         
-        <Select value={category} onValueChange={setCategory}>
+        <Select value={category} onValueChange={handleFilterChange(setCategory)}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by Category" />
           </SelectTrigger>
@@ -98,7 +113,7 @@ export default function CoursesPage() {
           </SelectContent>
         </Select>
 
-        <Select value={instructor} onValueChange={setInstructor}>
+        <Select value={instructor} onValueChange={handleFilterChange(setInstructor)}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by Instructor" />
           </SelectTrigger>
@@ -110,7 +125,7 @@ export default function CoursesPage() {
           </SelectContent>
         </Select>
 
-        <Select value={priceRange} onValueChange={setPriceRange}>
+        <Select value={priceRange} onValueChange={handleFilterChange(setPriceRange)}>
           <SelectTrigger>
             <SelectValue placeholder="Filter by Price" />
           </SelectTrigger>
@@ -123,7 +138,7 @@ export default function CoursesPage() {
           </SelectContent>
         </Select>
         
-        <Select value={sortOrder} onValueChange={setSortOrder}>
+        <Select value={sortOrder} onValueChange={handleFilterChange(setSortOrder)}>
           <SelectTrigger>
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
