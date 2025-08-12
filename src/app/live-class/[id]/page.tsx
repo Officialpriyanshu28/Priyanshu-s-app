@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, 'useState } from 'react';
 import { notFound, useParams } from 'next/navigation';
 import { liveClasses } from '@/lib/data';
 import type { Poll, PollOption, PollRanking } from '@/lib/types';

@@ -12,13 +12,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Laptop, Smartphone, LogOut } from 'lucide-react';
+import { Laptop, Smartphone, LogOut, Award, Trophy, Crown } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const mockDevices = [
     { id: 'device-1', type: 'Laptop', name: 'Chrome on macOS', location: 'New York, USA', isCurrent: true },
     { id: 'device-2', type: 'Smartphone', name: 'Mobile App on iPhone 15', location: 'New York, USA', isCurrent: false },
 ]
+
+const mockAchievements = [
+    { id: 'achieve-1', name: 'Course Conqueror', description: 'Finish your first course', icon: <Award className="h-8 w-8 text-yellow-500" /> },
+    { id: 'achieve-2', name: 'Quiz Master', description: 'Score 100% on a quiz', icon: <Trophy className="h-8 w-8 text-blue-500" /> },
+    { id: 'achieve-3', name: 'Perfect Week', description: 'Log in for 7 days in a row', icon: <Award className="h-8 w-8 text-green-500" /> },
+];
+
+const mockLeaderboard = [
+    { rank: 1, name: 'Alice', points: 1250, avatar: 'https://i.pravatar.cc/40?u=alice' },
+    { rank: 2, name: 'John Doe', points: 1100, avatar: 'https://i.pravatar.cc/40?u=john' },
+    { rank: 3, name: 'Bob', points: 980, avatar: 'https://i.pravatar.cc/40?u=bob' },
+    { rank: 4, name: 'Charlie', points: 950, avatar: 'https://i.pravatar.cc/40?u=charlie' },
+    { rank: 5, name: 'David', points: 800, avatar: 'https://i.pravatar.cc/40?u=david' },
+];
 
 export default function ProfilePage() {
   const { toast } = useToast();
@@ -70,6 +85,40 @@ export default function ProfilePage() {
             </div>
             <Button type="submit">Change Password</Button>
           </form>
+
+          <div className="space-y-4 border-t pt-6">
+             <h3 className="text-lg font-semibold font-headline">Achievements</h3>
+             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {mockAchievements.map(achieve => (
+                    <div key={achieve.id} className="flex flex-col items-center text-center p-4 border rounded-lg bg-muted/50">
+                        {achieve.icon}
+                        <p className="font-bold mt-2 text-sm">{achieve.name}</p>
+                        <p className="text-xs text-muted-foreground">{achieve.description}</p>
+                    </div>
+                ))}
+             </div>
+          </div>
+          
+           <div className="space-y-4 border-t pt-6">
+             <h3 className="text-lg font-semibold font-headline flex items-center gap-2"><Trophy className="text-yellow-500" />Top Learners</h3>
+             <div className="space-y-3">
+                {mockLeaderboard.map(learner => (
+                    <div key={learner.rank} className="flex items-center justify-between p-2 rounded-lg border">
+                        <div className="flex items-center gap-3">
+                           <span className="font-bold text-lg w-6 text-center">
+                             {learner.rank === 1 ? <Crown className="h-5 w-5 text-yellow-500"/> : learner.rank}
+                           </span>
+                           <Avatar className="h-9 w-9">
+                              <AvatarImage src={learner.avatar} alt={learner.name} />
+                              <AvatarFallback>{learner.name.charAt(0)}</AvatarFallback>
+                           </Avatar>
+                           <p className="font-medium">{learner.name}</p>
+                        </div>
+                        <p className="font-bold">{learner.points} pts</p>
+                    </div>
+                ))}
+             </div>
+          </div>
 
           <div className="space-y-4 border-t pt-6">
              <h3 className="text-lg font-semibold font-headline">Device Management</h3>
