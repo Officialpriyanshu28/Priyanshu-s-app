@@ -33,6 +33,7 @@ import { cn } from '@/lib/utils';
 const features = [
   { href: '/courses', label: 'All Courses', icon: GraduationCap, new: false },
   { href: '/my-courses', label: 'My Courses', icon: PlaySquare, new: false },
+  { href: '/ai-assistant', label: 'AI Assistant', icon: Bot, new: true },
   { href: '/notifications', label: 'Notifications', icon: Bell, new: true },
   { href: '/assignments', label: 'Assignments', icon: FilePenLine, new: true },
   { href: '/notes', label: 'PDF Notes', icon: FileText, new: false },
@@ -41,7 +42,6 @@ const features = [
   { href: '/live-class', label: 'Live Class', icon: Radio, new: true },
   { href: '/help', label: 'Help', icon: HelpCircle, new: false },
   { href: '/social', label: 'Social Links', icon: Link2, new: false },
-  { href: '/ai-assistant', label: 'AI Assistant', icon: Bot, new: false },
   { href: '/#', label: 'Download', icon: Download, new: false },
 ];
 
@@ -82,7 +82,7 @@ export default function Home() {
         {/* Features Grid */}
         <section>
           <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {features.filter(f => f.label !== 'AI Assistant').map(({ href, label, icon: Icon, new: isNew }) => (
+            {features.map(({ href, label, icon: Icon, new: isNew }) => (
               <Link href={href} key={label} className="block">
                 <Card className="h-full transition-shadow hover:shadow-lg">
                   <CardContent className="flex flex-col items-center justify-center p-4 text-center aspect-square">
