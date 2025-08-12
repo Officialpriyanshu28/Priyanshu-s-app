@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A course assistant AI agent.
@@ -67,6 +68,7 @@ const courseAssistantFlow = ai.defineFlow(
   },
   async (input) => {
     const {output} = await courseAssistantPrompt(input);
-    return output as string;
+    // Ensure we always return a string, even if the model output is null/undefined.
+    return output ?? "Sorry, I couldn't generate a response. Please try again.";
   }
 );
