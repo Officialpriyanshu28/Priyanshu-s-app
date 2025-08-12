@@ -25,7 +25,7 @@ export default function LoginPage() {
 
   const handleLogin = () => {
     // Hardcoded admin credentials
-    if (email === 'admin@example.com' && password === 'password') {
+    if (email === 'kumarikiran91133963@gmail.com' && password === 'Priyanshu9113396384') {
       toast({ title: "Login Successful", description: "Redirecting to admin panel..." });
       router.push('/admin');
     } else {
