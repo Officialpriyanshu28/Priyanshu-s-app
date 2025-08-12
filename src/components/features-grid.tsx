@@ -16,6 +16,7 @@ import {
     HelpCircle,
     Link2,
     Download,
+    Code2,
     type LucideIcon
 } from 'lucide-react';
 
@@ -31,6 +32,7 @@ const iconMap: { [key: string]: LucideIcon } = {
     HelpCircle,
     Link2,
     Download,
+    Code2,
 };
 
 export interface Feature {
