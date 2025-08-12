@@ -96,7 +96,6 @@ const ChatInterface = ({
 );
 
 const ImageSolverTab = ({
-    image,
     imagePreview,
     handleImageChange,
     question,
@@ -321,6 +320,7 @@ export default function AiAssistantPage() {
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
     
+    // Reset all states when changing tabs to avoid carrying over data
     setResponse('');
     setQuestion('');
     setCode('');
@@ -366,7 +366,6 @@ export default function AiAssistantPage() {
         case 'image_solver':
             return (
                  <ImageSolverTab
-                    image={image}
                     imagePreview={imagePreview}
                     handleImageChange={handleImageChange}
                     question={question}
@@ -414,7 +413,7 @@ export default function AiAssistantPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="chat" onValueChange={handleTabChange} className="w-full">
+      <Tabs defaultValue="chat" value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="chat"><MessageSquare className="mr-2 h-4 w-4" /> Chat</TabsTrigger>
           <TabsTrigger value="image_solver"><ImageIcon className="mr-2 h-4 w-4" /> Image Solver</TabsTrigger>
