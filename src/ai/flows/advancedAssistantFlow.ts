@@ -53,7 +53,7 @@ Image: {{media url=image}}
 Question: {{{question}}}
 {{/if}}
 
-{{#if (eq mode "text_genius_summary")}}
+{{#if text_genius_summary}}
 You are an expert summarizer. The user has provided a block of text.
 Generate a concise and easy-to-understand summary of the text.
 The summary should capture the key points and main ideas.
@@ -62,7 +62,7 @@ Text to summarize:
 "{{{question}}}"
 {{/if}}
 
-{{#if (eq mode "text_genius_mindmap")}}
+{{#if text_genius_mindmap}}
 You are an expert at creating structured mind maps. The user has provided a block of text.
 Generate a mind map in Markdown format.
 Use nested lists with headings (e.g., ###) for different branches.
@@ -104,7 +104,7 @@ Current question:
 **user**: {{{question}}}
 **model**:
 {{else}}
-  {{#if (eq mode "chat")}}
+  {{#if chat}}
   You are a helpful and friendly AI chat assistant.
   Start the conversation with the user.
   Be concise and helpful.
@@ -129,20 +129,23 @@ const advancedAssistantFlow = ai.defineFlow(
     // The prompt has been refactored to use simple '#if' blocks which check for the presence of a key.
     // To make this work, we only pass the relevant data for the current mode to the prompt.
     let promptData: any = {
-      mode: input.mode,
       question: input.question,
     };
 
     if (input.mode === 'image_solver') {
       promptData.image = input.image;
     } else if (input.mode === 'text_genius_summary') {
-      // The prompt uses 'question' for the text to summarize
+      promptData.text_genius_summary = true;
     } else if (input.mode === 'text_genius_mindmap') {
-      // The prompt uses 'question' for the text to create a mind map from
+      promptData.text_genius_mindmap = true;
     } else if (input.mode === 'code_doctor') {
       promptData.code = input.code;
     } else if (input.mode === 'chat') {
-      promptData.chat_history = input.chat_history;
+       if (input.chat_history && input.chat_history.length > 0) {
+        promptData.chat_history = input.chat_history;
+       } else {
+        promptData.chat = true;
+       }
     }
     
     // Render the prompt with the correct data
