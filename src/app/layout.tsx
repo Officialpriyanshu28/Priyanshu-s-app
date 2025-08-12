@@ -11,6 +11,7 @@ const ptSans = PT_Sans({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-sans",
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

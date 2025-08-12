@@ -62,7 +62,7 @@ export default function Logo({ className, textClassName }: LogoProps) {
           textClassName
         )}
       >
-        Priyanshu's app
+        SkillzUp
       </span>
     </div>
   );
