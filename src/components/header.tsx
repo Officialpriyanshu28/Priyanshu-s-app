@@ -90,10 +90,10 @@ export default function Header() {
           })}
         </nav>
 
-        <Link href="/auth/login" passHref>
+        <Link href="/profile" passHref>
           <Button variant="ghost" size="icon">
             <User className="h-6 w-6" />
-            <span className="sr-only">Login</span>
+            <span className="sr-only">Profile</span>
           </Button>
         </Link>
       </div>

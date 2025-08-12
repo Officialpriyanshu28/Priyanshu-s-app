@@ -10,7 +10,7 @@ const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/my-courses', label: 'My Courses', icon: BookOpen },
   { href: '/help', label: 'Help', icon: HelpCircle },
-  { href: '/auth/login', label: 'Login', icon: User },
+  { href: '/profile', label: 'Profile', icon: User },
 ];
 
 export default function BottomNav() {
