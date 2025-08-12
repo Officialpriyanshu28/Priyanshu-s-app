@@ -22,7 +22,8 @@ import {
     Link2,
     Bot,
     GraduationCap,
-    Radio
+    Radio,
+    Download
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,7 @@ const features = [
   { href: '/help', label: 'Help', icon: HelpCircle, new: false },
   { href: '/social', label: 'Social Links', icon: Link2, new: false },
   { href: '/ai-assistant', label: 'AI Assistant', icon: Bot, new: false },
+  { href: '/#', label: 'Download', icon: Download, new: false },
 ];
 
 
@@ -77,7 +79,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
         {/* Features Grid */}
         <section>
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {features.map(({ href, label, icon: Icon, new: isNew }) => (
               <Link href={href} key={label} className="block">
                 <Card className="h-full transition-shadow hover:shadow-lg">
