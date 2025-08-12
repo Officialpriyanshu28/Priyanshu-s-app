@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -24,6 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 
 export default function AiAssistantPage() {
+  const [activeTab, setActiveTab] = useState('image_solver');
   const [mode, setMode] = useState<AdvancedAssistantInput['mode']>('image_solver');
   const [question, setQuestion] = useState('');
   const [image, setImage] = useState<string | null>(null);
@@ -47,11 +49,12 @@ export default function AiAssistantPage() {
     }
   };
 
-  const handleSubmit = async () => {
-    let input: AdvancedAssistantInput = { mode };
+  const handleSubmit = async (currentMode?: AdvancedAssistantInput['mode']) => {
+    const modeToUse = currentMode || mode;
+    let input: AdvancedAssistantInput = { mode: modeToUse };
     let hasInput = false;
 
-    if (mode === 'image_solver') {
+    if (modeToUse === 'image_solver') {
       if (!image || !question) {
         toast({ variant: 'destructive', title: 'Please upload an image and ask a question.' });
         return;
@@ -59,14 +62,14 @@ export default function AiAssistantPage() {
       input.image = image;
       input.question = question;
       hasInput = true;
-    } else if (mode === 'text_genius_summary' || mode === 'text_genius_mindmap') {
+    } else if (modeToUse === 'text_genius_summary' || modeToUse === 'text_genius_mindmap') {
       if (!text) {
         toast({ variant: 'destructive', title: 'Please enter some text.' });
         return;
       }
       input.question = text; // Use question field for text
       hasInput = true;
-    } else if (mode === 'code_doctor') {
+    } else if (modeToUse === 'code_doctor') {
       if (!code) {
         toast({ variant: 'destructive', title: 'Please enter some code.' });
         return;
@@ -94,14 +97,25 @@ export default function AiAssistantPage() {
     }
   };
   
-  const handleTabChange = (newMode: string) => {
-    setMode(newMode as AdvancedAssistantInput['mode']);
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    // Set a default mode for the new tab
+    if (newTab === 'image_solver') setMode('image_solver');
+    if (newTab === 'text_genius') setMode('text_genius_summary'); // Default to summary
+    if (newTab === 'code_doctor') setMode('code_doctor');
+    
+    // Reset states
     setResponse('');
     setQuestion('');
     setCode('');
     setText('');
     setImage(null);
     setImagePreview(null);
+  }
+  
+  const handleTextGenSubmit = (textGenMode: 'text_genius_summary' | 'text_genius_mindmap') => {
+    setMode(textGenMode);
+    handleSubmit(textGenMode);
   }
 
   const renderResponse = () => (
@@ -172,11 +186,11 @@ export default function AiAssistantPage() {
                 <Textarea id="text-input" placeholder="Paste text from a PDF, article, or notes here..." value={text} onChange={(e) => setText(e.target.value)} rows={10} />
               </div>
               <div className="flex gap-4">
-                  <Button className="w-full" onClick={() => { setMode('text_genius_summary'); handleSubmit(); }} disabled={isLoading}>
+                  <Button className="w-full" onClick={() => handleTextGenSubmit('text_genius_summary')} disabled={isLoading}>
                     {isLoading && mode === 'text_genius_summary' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Summarize
                   </Button>
-                   <Button className="w-full" variant="outline" onClick={() => { setMode('text_genius_mindmap'); handleSubmit(); }} disabled={isLoading}>
+                   <Button className="w-full" variant="outline" onClick={() => handleTextGenSubmit('text_genius_mindmap')} disabled={isLoading}>
                     {isLoading && mode === 'text_genius_mindmap' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     Create Mind Map
                   </Button>
@@ -201,9 +215,9 @@ export default function AiAssistantPage() {
         </TabsContent>
       </Tabs>
       
-      {(mode === 'image_solver' || mode === 'code_doctor') && (
+      {(activeTab === 'image_solver' || activeTab === 'code_doctor') && (
         <div className="mt-4">
-          <Button onClick={handleSubmit} disabled={isLoading} className="w-full">
+          <Button onClick={() => handleSubmit()} disabled={isLoading} className="w-full">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? 'Thinking...' : 'Get Answer'}
           </Button>
