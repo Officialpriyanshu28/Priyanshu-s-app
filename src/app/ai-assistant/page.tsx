@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Bot, Image as ImageIcon, FileText, Code, Sparkles, Loader2, Send, MessageSquare, Key } from 'lucide-react';
+import { Bot, Image as ImageIcon, FileText, Code, Sparkles, Loader2, Send, MessageSquare } from 'lucide-react';
 import { advancedAssistant, AdvancedAssistantInput, ChatMessage } from '@/ai/flows/advancedAssistantFlow';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
@@ -30,40 +30,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
-const ApiKeyInput = () => {
-    const [apiKey, setApiKey] = useState('');
-    const { toast } = useToast();
-    
-    const handleApiKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setApiKey(e.target.value);
-        // This is a simple way to pass the key to the parent handlers.
-        // In a real app, you'd likely use state management (Context, Zustand, etc.)
-        (window as any).tempApiKey = e.target.value;
-    };
-    
-    useEffect(() => {
-        (window as any).tempApiKey = '';
-        return () => delete (window as any).tempApiKey;
-    }, []);
-
-    return (
-        <div className="relative mb-4">
-            <Label htmlFor="api-key" className="sr-only">API Key</Label>
-            <Input 
-                id="api-key"
-                type="password"
-                placeholder="Enter your AI API Key here..."
-                value={apiKey}
-                onChange={handleApiKeyChange}
-                className="pl-10"
-            />
-            <Key className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-        </div>
-    );
-};
-
 const ChatInterface = ({
-    apiKey,
     handleSubmit,
     isLoading,
     question,
@@ -71,7 +38,6 @@ const ChatInterface = ({
     chatHistory,
     chatScrollAreaRef
 } : {
-    apiKey: string,
     handleSubmit: (mode: AdvancedAssistantInput['mode']) => void,
     isLoading: boolean,
     question: string,
@@ -82,10 +48,9 @@ const ChatInterface = ({
     <Card className="flex flex-col h-[70vh]">
         <CardHeader>
             <CardTitle>Chat with AI</CardTitle>
-            <CardDescription>Enter your API Key and start chatting. I'm here to help.</CardDescription>
+            <CardDescription>I'm here to help. Start chatting.</CardDescription>
         </CardHeader>
         <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
-             <ApiKeyInput />
              <ScrollArea className="flex-1 pr-4" ref={chatScrollAreaRef}>
                  <div className="space-y-4">
                     {chatHistory.map((msg, index) => (
@@ -122,7 +87,7 @@ const ChatInterface = ({
                     onChange={(e) => setQuestion(e.target.value)}
                     disabled={isLoading}
                 />
-                <Button type="submit" size="icon" disabled={isLoading || !(window as any).tempApiKey}>
+                <Button type="submit" size="icon" disabled={isLoading}>
                     <Send className="h-4 w-4" />
                 </Button>
             </form>
@@ -136,7 +101,6 @@ const ImageSolverTab = ({
     handleImageChange,
     question,
     setQuestion,
-    apiKey,
     handleSubmit,
     isLoading,
     response
@@ -147,7 +111,6 @@ const ImageSolverTab = ({
           <CardDescription>Upload an image with a question, and let the AI solve it.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <ApiKeyInput />
           <div>
             <Label htmlFor="image-upload">Upload Image</Label>
             <Input id="image-upload" type="file" accept="image/*" onChange={handleImageChange} />
@@ -162,7 +125,7 @@ const ImageSolverTab = ({
             <Textarea id="image-question" placeholder="e.g., 'Solve for x in the equation shown.'" value={question} onChange={(e) => setQuestion(e.target.value)} />
           </div>
            <div className="mt-4">
-              <Button onClick={() => handleSubmit('image_solver')} disabled={isLoading || !(window as any).tempApiKey} className="w-full">
+              <Button onClick={() => handleSubmit('image_solver')} disabled={isLoading} className="w-full">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? 'Thinking...' : 'Get Answer'}
               </Button>
@@ -177,7 +140,6 @@ const ImageSolverTab = ({
 const TextGeniusTab = ({
     text,
     setText,
-    apiKey,
     handleTextGenSubmit,
     isLoading,
     mode,
@@ -189,17 +151,16 @@ const TextGeniusTab = ({
           <CardDescription>Paste any text to get a quick summary or a structured mind map.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-           <ApiKeyInput />
            <div>
             <Label htmlFor="text-input">Your Text</Label>
             <Textarea id="text-input" placeholder="Paste text from a PDF, article, or notes here..." value={text} onChange={(e) => setText(e.target.value)} rows={10} />
           </div>
           <div className="flex gap-4">
-              <Button className="w-full" onClick={() => handleTextGenSubmit('text_genius_summary')} disabled={isLoading || !(window as any).tempApiKey}>
+              <Button className="w-full" onClick={() => handleTextGenSubmit('text_genius_summary')} disabled={isLoading}>
                 {isLoading && mode === 'text_genius_summary' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Summarize
               </Button>
-               <Button className="w-full" variant="outline" onClick={() => handleTextGenSubmit('text_genius_mindmap')} disabled={isLoading || !(window as any).tempApiKey}>
+               <Button className="w-full" variant="outline" onClick={() => handleTextGenSubmit('text_genius_mindmap')} disabled={isLoading}>
                 {isLoading && mode === 'text_genius_mindmap' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Create Mind Map
               </Button>
@@ -213,7 +174,6 @@ const TextGeniusTab = ({
 const CodeDoctorTab = ({
     code,
     setCode,
-    apiKey,
     handleSubmit,
     isLoading,
     response
@@ -224,13 +184,12 @@ const CodeDoctorTab = ({
           <CardDescription>Paste your code snippet and the AI will find and fix errors for you.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <ApiKeyInput />
           <div>
               <Label htmlFor="code-input">Code Snippet</Label>
               <Textarea id="code-input" placeholder="Paste your code here..." value={code} onChange={(e) => setCode(e.target.value)} rows={10} className="font-mono" />
           </div>
           <div className="mt-4">
-              <Button onClick={() => handleSubmit('code_doctor')} disabled={isLoading || !(window as any).tempApiKey} className="w-full">
+              <Button onClick={() => handleSubmit('code_doctor')} disabled={isLoading} className="w-full">
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isLoading ? 'Thinking...' : 'Get Answer'}
               </Button>
@@ -296,14 +255,8 @@ export default function AiAssistantPage() {
 
   const handleSubmit = async (currentMode?: AdvancedAssistantInput['mode']) => {
     const modeToUse = currentMode || mode;
-    const apiKey = (window as any).tempApiKey;
-
-    if (!apiKey) {
-      toast({ variant: 'destructive', title: 'Please enter your API Key.' });
-      return;
-    }
     
-    let input: AdvancedAssistantInput = { mode: modeToUse, apiKey };
+    let input: AdvancedAssistantInput = { mode: modeToUse };
     let hasInput = false;
 
     if (modeToUse === 'image_solver') {
@@ -425,7 +378,6 @@ export default function AiAssistantPage() {
         
         <TabsContent value="chat">
             <ChatInterface 
-                apiKey={(window as any).tempApiKey}
                 handleSubmit={handleSubmit}
                 isLoading={isLoading}
                 question={question}
@@ -443,7 +395,6 @@ export default function AiAssistantPage() {
                 handleImageChange={handleImageChange}
                 question={question}
                 setQuestion={setQuestion}
-                apiKey={(window as any).tempApiKey}
                 handleSubmit={handleSubmit}
                 isLoading={isLoading && mode === 'image_solver'}
                 response={response}
@@ -456,7 +407,6 @@ export default function AiAssistantPage() {
              <TextGeniusTab
                 text={text}
                 setText={setText}
-                apiKey={(window as any).tempApiKey}
                 handleTextGenSubmit={handleTextGenSubmit}
                 isLoading={isLoading && (mode === 'text_genius_summary' || mode === 'text_genius_mindmap')}
                 mode={mode}
@@ -470,7 +420,6 @@ export default function AiAssistantPage() {
              <CodeDoctorTab
                 code={code}
                 setCode={setCode}
-                apiKey={(window as any).tempApiKey}
                 handleSubmit={handleSubmit}
                 isLoading={isLoading && mode === 'code_doctor'}
                 response={response}
@@ -482,4 +431,3 @@ export default function AiAssistantPage() {
     </div>
   );
 }
-

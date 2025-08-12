@@ -29,7 +29,6 @@ const AdvancedAssistantInputSchema = z.object({
     ),
   code: z.string().optional().describe('A code snippet that might contain errors.'),
   chat_history: z.array(ChatMessageSchema).optional().describe('The history of the conversation.'),
-  apiKey: z.string().optional().describe('The user-provided API key for the AI model.'),
 });
 
 export type AdvancedAssistantInput = z.infer<typeof AdvancedAssistantInputSchema>;
@@ -121,10 +120,7 @@ const advancedAssistantFlow = ai.defineFlow(
     // Dynamically create a model instance with the user's API key.
     const { output } = await generate({
         prompt: await assistantPrompt.render(input),
-        model: googleAI.model('gemini-1.5-flash-latest'),
-        config: {
-            auth: { apiKey: input.apiKey || process.env.GEMINI_API_KEY || '' }
-        }
+        model: 'gemini-1.5-flash-latest'
     });
     
     return output?.text ?? "Sorry, I couldn't process your request. Please try again.";
