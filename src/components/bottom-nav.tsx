@@ -9,12 +9,12 @@ import { useState, useEffect } from 'react';
 
 export default function BottomNav() {
   const pathname = usePathname();
-  // Mock authentication state - assume user is logged in for now
+  // Mock authentication state - assume user is not logged in by default
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // This runs only on the client, after hydration
-    setIsAuthenticated(true);
+    // In a real app, you'd check for a token in localStorage here.
+    // For this prototype, we'll keep the user logged out by default.
   }, []);
 
   const navItems = [

@@ -71,15 +71,15 @@ export default function ProfilePage() {
              <h3 className="text-lg font-semibold font-headline">Personal Information</h3>
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="John Doe" />
+              <Input id="name" placeholder="Your Name" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" defaultValue="john.doe@example.com" />
+              <Input id="email" type="email" placeholder="your@email.com" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" type="tel" defaultValue="+1234567890" />
+              <Input id="phone" type="tel" placeholder="Your Phone Number" />
             </div>
             <Button type="submit">Update Profile</Button>
           </form>
@@ -144,7 +144,7 @@ export default function ProfilePage() {
                                 <p className="text-xs text-muted-foreground">{device.location}</p>
                             </div>
                         </div>
-                        {!device.isCurrent && <Button variant="ghost" size="sm"><LogOut className="mr-2 h-4 w-4" />Logout</Button>}
+                        {!device.isCurrent && <Button variant="ghost" size="sm" onClick={handleLogout}><LogOut className="mr-2 h-4 w-4" />Logout</Button>}
                     </div>
                 ))}
              </div>

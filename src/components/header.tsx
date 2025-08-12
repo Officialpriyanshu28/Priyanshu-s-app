@@ -24,12 +24,14 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
-  // Mock authentication state - assume user is logged in for now
+  // Mock authentication state - assume user is not logged in by default
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   useEffect(() => {
-    // This runs only on the client, after hydration
-    setIsAuthenticated(true);
+    // In a real app, you'd check for a token in localStorage here
+    // For now, we'll keep it simple and assume logged out.
+    // To test the logged-in state, you can manually set this to true.
+    // setIsAuthenticated(true); 
   }, []);
 
 
@@ -108,7 +110,7 @@ export default function Header() {
             </Link>
         ) : (
             <Link href="/auth/login" passHref>
-              <Button variant="ghost">Login</Button>
+              <Button>Login</Button>
             </Link>
         )}
       </div>
