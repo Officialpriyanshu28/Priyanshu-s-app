@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
+import { PT_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/header";
 import BottomNav from "@/components/bottom-nav";
 import ClientLayoutSetup from "@/components/client-layout-setup";
 import { cn } from "@/lib/utils";
+
+const ptSans = PT_Sans({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "SkillzUp",
@@ -18,19 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className={cn("font-body antialiased", "bg-background")}>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          ptSans.variable
+        )}
+      >
         <ClientLayoutSetup />
         <Header />
         <main className="pb-20 pt-16 md:pb-0">{children}</main>
