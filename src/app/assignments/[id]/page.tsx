@@ -42,6 +42,7 @@ export default function AssignmentDetailPage() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // This ensures the following code only runs on the client, after hydration
     setIsClient(true);
     if (assignment) {
       setIsOverdue(new Date(assignment.dueDate) < new Date());
@@ -152,9 +153,13 @@ export default function AssignmentDetailPage() {
                        <Clock className="h-4 w-4 text-muted-foreground" />
                        <span className="font-medium">Due Date</span>
                     </div>
-                     <p className={isOverdue ? "text-destructive font-semibold" : ""}>
-                        {format(new Date(assignment.dueDate), "PPP p")}
-                    </p>
+                     {isClient ? (
+                        <p className={isOverdue ? "text-destructive font-semibold" : ""}>
+                            {format(new Date(assignment.dueDate), "PPP p")}
+                        </p>
+                     ) : (
+                        <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
+                     )}
                 </CardContent>
             </Card>
             
@@ -192,9 +197,9 @@ export default function AssignmentDetailPage() {
                                 <Input id="assignment-file" type="file" onChange={handleFileChange} />
                                 {file && <p className="text-xs text-muted-foreground mt-2">Selected: {file.name}</p>}
                             </div>
-                            <Button type="submit" className="w-full" disabled={isSubmitting || isOverdue}>
+                            <Button type="submit" className="w-full" disabled={isSubmitting || (isClient && isOverdue)}>
                                 {isSubmitting && <Upload className="mr-2 h-4 w-4 animate-pulse" />}
-                                {isOverdue ? 'Submission Closed' : (isSubmitting ? 'Submitting...' : 'Submit Assignment')}
+                                {isClient && isOverdue ? 'Submission Closed' : (isSubmitting ? 'Submitting...' : 'Submit Assignment')}
                             </Button>
                         </form>
                     )}
