@@ -210,14 +210,6 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                 <h1 className="text-2xl md:text-3xl font-bold font-headline">
                     {activeVideo?.title}
                 </h1>
-                {activeVideo && (
-                     <Button asChild variant="outline">
-                        <Link href={activeVideo.url} target="_blank" download>
-                           <Download className="mr-2 h-4 w-4" />
-                           Download Video
-                        </Link>
-                     </Button>
-                )}
               </div>
               
               <Tabs defaultValue="description" className="mt-4">
@@ -233,6 +225,10 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                     <TabsTrigger value="ai-assistant">
                         <Bot className="h-4 w-4 mr-2"/>
                         AI Assistant
+                    </TabsTrigger>
+                    <TabsTrigger value="download">
+                        <Download className="h-4 w-4 mr-2"/>
+                        Download
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="description" className="mt-4">
@@ -336,6 +332,24 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                             </form>
                         </div>
                     </div>
+                </TabsContent>
+                <TabsContent value="download" className="mt-4">
+                     {activeVideo ? (
+                        <div className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                            <div className="flex items-center gap-3">
+                                <PlayCircle className="h-5 w-5 text-primary" />
+                                <span className="font-medium">{activeVideo.title}</span>
+                            </div>
+                            <Button asChild variant="outline">
+                                <Link href={activeVideo.url} target="_blank" download>
+                                <Download className="mr-2 h-4 w-4" />
+                                Download Video
+                                </Link>
+                            </Button>
+                        </div>
+                     ) : (
+                        <p className="text-muted-foreground text-center py-8">No video selected.</p>
+                     )}
                 </TabsContent>
               </Tabs>
           </div>
