@@ -19,6 +19,7 @@ import { useRouter } from 'next/navigation';
 import type { Course } from '@/lib/types';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { createCourse, updateCourse } from '@/services/courseService';
 
 interface CourseFormProps {
   course?: Course;
@@ -40,14 +41,57 @@ export default function CourseForm({ course }: CourseFormProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // In a real app, you'd handle form submission to your backend here
-    toast({
-      title: `Course ${course ? 'Updated' : 'Created'}`,
-      description: `The course details have been successfully ${course ? 'updated' : 'saved'}.`,
-    });
-    router.push('/admin/courses');
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+        if (course) {
+            // Update existing course
+            await updateCourse(course.id, {
+                ...course,
+                title: data.title as string,
+                description: data.description as string,
+                price: Number(data.price),
+                mrp: Number(data.mrp),
+                instructor: data.instructor as string,
+                category: data.category as string,
+                thumbnail: imagePreview || course.thumbnail,
+            });
+            toast({
+              title: "Course Updated",
+              description: "The course details have been successfully updated.",
+            });
+        } else {
+            // Create new course
+            await createCourse({
+                id: `course-${Date.now()}`, // Simple ID generation for mock
+                title: data.title as string,
+                description: data.description as string,
+                price: Number(data.price),
+                mrp: Number(data.mrp),
+                instructor: data.instructor as string,
+                category: data.category as string,
+                thumbnail: imagePreview || 'https://placehold.co/600x400.png',
+                chapters: [],
+                durationHours: 0,
+            });
+            toast({
+              title: "Course Created",
+              description: "The new course has been successfully saved.",
+            });
+        }
+        router.push('/admin/courses');
+        // Optional: Force a refresh to see changes if data isn't updating automatically
+        router.refresh();
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "An error occurred",
+            description: "Could not save the course. Please try again.",
+        });
+    }
   };
 
   return (
@@ -71,12 +115,13 @@ export default function CourseForm({ course }: CourseFormProps) {
                     <div className="md:col-span-2 space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="title">Course Title</Label>
-                            <Input id="title" defaultValue={course?.title} required />
+                            <Input id="title" name="title" defaultValue={course?.title} required />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="description">Description</Label>
                             <Textarea
                                 id="description"
+                                name="description"
                                 defaultValue={course?.description}
                                 required
                                 rows={5}
@@ -87,6 +132,7 @@ export default function CourseForm({ course }: CourseFormProps) {
                                 <Label htmlFor="price">Price (₹)</Label>
                                 <Input
                                 id="price"
+                                name="price"
                                 type="number"
                                 defaultValue={course?.price}
                                 required
@@ -94,7 +140,7 @@ export default function CourseForm({ course }: CourseFormProps) {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="mrp">MRP (₹)</Label>
-                                <Input id="mrp" type="number" defaultValue={course?.mrp} required />
+                                <Input id="mrp" name="mrp" type="number" defaultValue={course?.mrp} required />
                             </div>
                         </div>
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -102,6 +148,7 @@ export default function CourseForm({ course }: CourseFormProps) {
                                 <Label htmlFor="instructor">Instructor</Label>
                                 <Input
                                 id="instructor"
+                                name="instructor"
                                 defaultValue={course?.instructor}
                                 required
                                 />
@@ -110,6 +157,7 @@ export default function CourseForm({ course }: CourseFormProps) {
                                 <Label htmlFor="category">Category</Label>
                                 <Input
                                 id="category"
+                                name="category"
                                 defaultValue={course?.category}
                                 required
                                 />
