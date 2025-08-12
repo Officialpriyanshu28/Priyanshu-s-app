@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PlayCircle, Lock, FileText, Download } from 'lucide-react';
+import { PlayCircle, Lock, FileText, Download, MessageSquare } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -17,6 +17,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
 import type { Video } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Textarea } from '@/components/ui/textarea';
 
 function WatchPageClient({ courseId }: { courseId: string }) {
   const course = courses.find((c) => c.id === courseId);
@@ -185,6 +188,10 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                         <FileText className="h-4 w-4 mr-2"/>
                         Notes
                     </TabsTrigger>
+                     <TabsTrigger value="comments">
+                        <MessageSquare className="h-4 w-4 mr-2"/>
+                        Comments
+                    </TabsTrigger>
                     <TabsTrigger value="download">
                         <Download className="h-4 w-4 mr-2"/>
                         Download
@@ -216,6 +223,49 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                    ) : (
                     <p className="text-muted-foreground text-center py-8">No notes available for this chapter.</p>
                    )}
+                </TabsContent>
+                <TabsContent value="comments" className="mt-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Discussion</CardTitle>
+                            <CardDescription>Ask questions and share your thoughts.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                           <div className="space-y-4">
+                               {/* Mock Comments */}
+                               <div className="flex items-start gap-3">
+                                   <Avatar>
+                                       <AvatarImage src="https://i.pravatar.cc/40?u=student1" />
+                                       <AvatarFallback>S1</AvatarFallback>
+                                   </Avatar>
+                                   <div>
+                                       <p className="font-semibold">Jane Doe</p>
+                                       <p className="text-sm text-muted-foreground">This was a great explanation, thank you!</p>
+                                   </div>
+                               </div>
+                               <div className="flex items-start gap-3">
+                                   <Avatar>
+                                       <AvatarImage src="https://i.pravatar.cc/40?u=student2" />
+                                       <AvatarFallback>S2</AvatarFallback>
+                                   </Avatar>
+                                   <div>
+                                       <p className="font-semibold">Mike Ross</p>
+                                       <p className="text-sm text-muted-foreground">Could you please explain the concept of hydration again?</p>
+                                   </div>
+                               </div>
+                           </div>
+                        </CardContent>
+                        <CardFooter>
+                           <form className="w-full flex items-start gap-3">
+                                <Avatar>
+                                   <AvatarImage src="https://i.pravatar.cc/40?u=currentUser" />
+                                   <AvatarFallback>ME</AvatarFallback>
+                                </Avatar>
+                                <Textarea placeholder="Add a comment..." className="flex-1" />
+                                <Button>Post Comment</Button>
+                           </form>
+                        </CardFooter>
+                    </Card>
                 </TabsContent>
                 <TabsContent value="download" className="mt-4">
                      {activeVideo ? (
