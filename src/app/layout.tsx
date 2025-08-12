@@ -1,7 +1,6 @@
 
 'use client';
 
-import type { Metadata } from "next";
 import { PT_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,6 +9,7 @@ import BottomNav from "@/components/bottom-nav";
 import ClientLayoutSetup from "@/components/client-layout-setup";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { AuthProvider } from "@/hooks/use-auth";
 
 const ptSans = PT_Sans({
   subsets: ["latin"],
@@ -45,11 +45,13 @@ export default function RootLayout({
           ptSans.variable
         )}
       >
-        <ClientLayoutSetup />
-        {!isAdminPage && <Header />}
-        <main className={cn("pb-20 pt-16 md:pb-0", isAdminPage && "p-0 m-0 h-full")}>{children}</main>
-        {!isAdminPage && <BottomNav />}
-        <Toaster />
+        <AuthProvider>
+          <ClientLayoutSetup />
+          {!isAdminPage && <Header />}
+          <main className={cn("pb-20 pt-16 md:pb-0", isAdminPage && "p-0 m-0 h-full")}>{children}</main>
+          {!isAdminPage && <BottomNav />}
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

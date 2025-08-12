@@ -17,54 +17,66 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logo from "@/components/logo";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { sendOtp } from "@/ai/flows/sendOtpFlow";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, logIn, user } = useAuth();
   
-  const handleStudentLogin = (e: React.FormEvent) => {
-      e.preventDefault();
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  const [signupName, setSignupName] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [signupPhone, setSignupPhone] = useState('');
+  const [signupLoading, setSignupLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginLoading(true);
+    try {
+      await logIn(loginEmail, loginPassword);
+      toast({
+        title: "Login Successful",
+        description: "Welcome back!",
+      });
+      router.push('/');
+    } catch (error: any) {
+      console.error("Login failed:", error);
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Invalid email or password.",
+        description: error.message || "Invalid email or password.",
       });
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-
+    setSignupLoading(true);
     try {
-      // Call the AI flow to "send" the OTP
-      const result = await sendOtp({ email, phone });
-
-      if (result.success) {
-        toast({
-          title: "OTP Sent",
-          description: "An OTP has been sent to you. Please check the console.",
-        });
-        // In a real app, you might not pass the OTP in the query string for security
-        // But for this prototype, it simplifies testing.
-        router.push(`/auth/verify?otp=${result.otp}`);
-      } else {
-        throw new Error(result.message);
-      }
-    } catch (error: any) {
+      await signUp(signupEmail, signupPassword, signupName, signupPhone);
+      toast({
+        title: "Sign Up Successful",
+        description: "Your account has been created. Welcome!",
+      });
+      router.push('/');
+    } catch (error: any)
+    {
+      console.error("Sign up failed:", error);
       toast({
         variant: "destructive",
         title: "Sign Up Failed",
-        description: error.message || "Could not send OTP. Please try again.",
+        description: error.message || "Could not create account. Please try again.",
       });
     } finally {
-      setIsLoading(false);
+      setSignupLoading(false);
     }
   }
 
@@ -86,7 +98,7 @@ export default function LoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleStudentLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email-login">Email</Label>
                 <Input 
@@ -95,6 +107,8 @@ export default function LoginPage() {
                   type="email" 
                   placeholder="m@example.com" 
                   required 
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -111,10 +125,13 @@ export default function LoginPage() {
                   name="password"
                   type="password" 
                   required 
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
                 />
               </div>
-              <Button type="submit" className="w-full bg-accent hover:bg-accent/90">
-                Login
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={loginLoading}>
+                 {loginLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {loginLoading ? 'Logging in...' : 'Login'}
               </Button>
             </form>
           </CardContent>
@@ -132,23 +149,52 @@ export default function LoginPage() {
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name-signup">Name</Label>
-                <Input id="name-signup" name="name" type="text" required />
+                <Input 
+                  id="name-signup" 
+                  name="name" 
+                  type="text" 
+                  required
+                  value={signupName}
+                  onChange={(e) => setSignupName(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone-signup">Phone</Label>
-                <Input id="phone-signup" name="phone" type="tel" required />
+                <Input 
+                  id="phone-signup" 
+                  name="phone" 
+                  type="tel" 
+                  required
+                  value={signupPhone}
+                  onChange={(e) => setSignupPhone(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email-signup">Email</Label>
-                <Input id="email-signup" name="email" type="email" placeholder="m@example.com" required />
+                <Input 
+                  id="email-signup" 
+                  name="email" 
+                  type="email" 
+                  placeholder="m@example.com" 
+                  required
+                  value={signupEmail}
+                  onChange={(e) => setSignupEmail(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password-signup">Password</Label>
-                <Input id="password-signup" name="password" type="password" required />
+                <Input 
+                  id="password-signup" 
+                  name="password" 
+                  type="password" 
+                  required 
+                  value={signupPassword}
+                  onChange={(e) => setSignupPassword(e.target.value)}
+                />
               </div>
-              <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={isLoading}>
-                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? 'Sending OTP...' : 'Sign Up'}
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90" disabled={signupLoading}>
+                 {signupLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {signupLoading ? 'Creating account...' : 'Sign Up'}
               </Button>
             </form>
           </CardContent>

@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import Logo from './logo';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -23,9 +24,8 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
-  // Authentication state is now handled by always showing the login button
-  // for non-authenticated users, which is the default state.
-  const isAuthenticated = false; 
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const isActive = pathname === href;

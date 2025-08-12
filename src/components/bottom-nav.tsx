@@ -5,17 +5,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, BookOpen, HelpCircle, User, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function BottomNav() {
   const pathname = usePathname();
-  // Mock authentication state - assume user is not logged in by default
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // In a real app, you'd check for a token in localStorage here.
-    // For this prototype, we'll keep the user logged out by default.
-  }, []);
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
 
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
