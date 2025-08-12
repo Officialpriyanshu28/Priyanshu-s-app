@@ -82,7 +82,7 @@ export default function Home() {
         {/* Features Grid */}
         <section>
           <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {features.map(({ href, label, icon: Icon, new: isNew }) => (
+            {features.filter(f => f.label !== 'AI Assistant').map(({ href, label, icon: Icon, new: isNew }) => (
               <Link href={href} key={label} className="block">
                 <Card className="h-full transition-shadow hover:shadow-lg">
                   <CardContent className="flex flex-col items-center justify-center p-4 text-center aspect-square">

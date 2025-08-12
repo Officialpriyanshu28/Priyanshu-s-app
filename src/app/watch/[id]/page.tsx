@@ -9,31 +9,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PlayCircle, Lock, FileText, Download, Bot, User, Send, Paperclip } from 'lucide-react';
+import { PlayCircle, Lock, FileText, Download } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import type { Video } from '@/lib/types';
-import { courseAssistant } from '@/ai/flows/courseAssistantFlow';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-
-interface Message {
-    role: 'user' | 'assistant';
-    content: string;
-    imagePreview?: string;
-}
 
 function WatchPageClient({ courseId }: { courseId: string }) {
   const course = courses.find((c) => c.id === courseId);
   const [activeVideo, setActiveVideo] = useState<Video | null>(null);
   const [activeChapterId, setActiveChapterId] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (course) {
@@ -44,15 +34,6 @@ function WatchPageClient({ courseId }: { courseId: string }) {
       }
     }
   }, [course]);
-
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -71,12 +52,10 @@ function WatchPageClient({ courseId }: { courseId: string }) {
         }
     };
     
-    // Save progress every 5 seconds
     const intervalId = setInterval(handleTimeUpdate, 5000);
 
     videoElement.addEventListener('loadeddata', handleLoadedData);
 
-    // Initial load
     handleLoadedData();
 
     return () => {
@@ -93,71 +72,10 @@ function WatchPageClient({ courseId }: { courseId: string }) {
   const handleVideoSelect = (video: Video, chapterId: string) => {
     setActiveVideo(video);
     setActiveChapterId(chapterId);
-    setMessages([]); // Clear chat history when video changes
   };
   
   const activeChapter = course.chapters.find(c => c.id === activeChapterId);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 4 * 1024 * 1024) { // 4MB limit
-        toast({
-          variant: "destructive",
-          title: "Image too large",
-          description: "Please select an image smaller than 4MB.",
-        });
-        return;
-      }
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if ((!input.trim() && !imageFile) || !activeVideo || !activeChapter) return;
-
-    let imageDataUri: string | undefined = undefined;
-    if (imageFile && imagePreview) {
-        imageDataUri = imagePreview;
-    }
-
-    const userMessage: Message = { role: 'user', content: input, imagePreview: imagePreview || undefined };
-    setMessages((prev) => [...prev, userMessage]);
-    
-    setInput('');
-    setImageFile(null);
-    setImagePreview(null);
-    if(fileInputRef.current) {
-        fileInputRef.current.value = '';
-    }
-    
-    setIsLoading(true);
-
-    try {
-      const assistantResponse = await courseAssistant({
-        courseTitle: course.title,
-        chapterTitle: activeChapter.title,
-        videoTitle: activeVideo.title,
-        question: input,
-        imageDataUri,
-      });
-      const assistantMessage: Message = { role: 'assistant', content: assistantResponse };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error("Error fetching AI response:", error);
-      const errorMessage: Message = { role: 'assistant', content: "Sorry, I couldn't get a response. Please try again." };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  
   const handleDownload = async (url: string, filename: string) => {
     try {
       const response = await fetch(url);
@@ -257,10 +175,6 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                         <FileText className="h-4 w-4 mr-2"/>
                         Notes
                     </TabsTrigger>
-                    <TabsTrigger value="ai-assistant">
-                        <Bot className="h-4 w-4 mr-2"/>
-                        AI Assistant
-                    </TabsTrigger>
                     <TabsTrigger value="download">
                         <Download className="h-4 w-4 mr-2"/>
                         Download
@@ -292,83 +206,6 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                    ) : (
                     <p className="text-muted-foreground text-center py-8">No notes available for this chapter.</p>
                    )}
-                </TabsContent>
-                 <TabsContent value="ai-assistant" className="mt-4">
-                    <div className="border rounded-lg bg-card h-[500px] flex flex-col">
-                        <ScrollArea className="flex-1 p-4">
-                            <div className="space-y-4">
-                            {messages.map((message, index) => (
-                                <div key={index} className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : '')}>
-                                    {message.role === 'assistant' && (
-                                         <Avatar className="h-8 w-8">
-                                            <AvatarFallback><Bot /></AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                    <div className={cn("p-3 rounded-lg max-w-sm", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
-                                        {message.imagePreview && (
-                                            <Image src={message.imagePreview} alt="User upload" width={200} height={200} className="rounded-md mb-2" />
-                                        )}
-                                        <p className="text-sm">{message.content}</p>
-                                    </div>
-                                     {message.role === 'user' && (
-                                         <Avatar className="h-8 w-8">
-                                            <AvatarFallback><User /></AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                </div>
-                            ))}
-                             {isLoading && (
-                                <div className="flex items-start gap-3">
-                                    <Avatar className="h-8 w-8">
-                                        <AvatarFallback><Bot /></AvatarFallback>
-                                    </Avatar>
-                                    <div className="p-3 rounded-lg bg-muted">
-                                        <p className="text-sm">Thinking...</p>
-                                    </div>
-                                </div>
-                            )}
-                            </div>
-                        </ScrollArea>
-                         {imagePreview && (
-                            <div className="p-4 border-t flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                <Image src={imagePreview} alt="Preview" width={40} height={40} className="rounded-md" />
-                                <span className="text-sm text-muted-foreground truncate max-w-xs">{imageFile?.name}</span>
-                                </div>
-                                <Button variant="ghost" size="sm" onClick={() => { setImagePreview(null); setImageFile(null); if(fileInputRef.current) fileInputRef.current.value = ''; }}>Remove</Button>
-                            </div>
-                        )}
-                        <div className="p-4 border-t">
-                            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                                 <Button 
-                                    type="button" 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    onClick={() => fileInputRef.current?.click()}
-                                    disabled={isLoading}
-                                 >
-                                    <Paperclip className="h-4 w-4" />
-                                 </Button>
-                                 <input 
-                                    type="file" 
-                                    ref={fileInputRef} 
-                                    onChange={handleFileChange}
-                                    className="hidden" 
-                                    accept="image/*"
-                                 />
-                                <Input 
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Ask a question about this video..."
-                                    disabled={isLoading}
-                                    className="flex-1"
-                                />
-                                <Button type="submit" disabled={isLoading || (!input.trim() && !imageFile)}>
-                                    <Send className="h-4 w-4" />
-                                </Button>
-                            </form>
-                        </div>
-                    </div>
                 </TabsContent>
                 <TabsContent value="download" className="mt-4">
                      {activeVideo ? (
