@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An advanced AI assistant with multiple capabilities.
@@ -8,7 +9,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { generate } from 'genkit/generate';
+import { generate } from 'genkit';
 import { z } from 'zod';
 
 const ChatMessageSchema = z.object({
