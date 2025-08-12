@@ -39,7 +39,6 @@ const features = [
   { href: '/notes', label: 'PDF Notes', icon: FileText, new: false },
   { href: '/test', label: 'Test', icon: ClipboardCheck, new: false },
   { href: '/timetable', label: 'Time Table', icon: CalendarDays, new: false },
-  { href: '/live-class', label: 'Live Class', icon: Radio, new: true },
   { href: '/help', label: 'Help', icon: HelpCircle, new: false },
   { href: '/social', label: 'Social Links', icon: Link2, new: false },
   { href: '/#', label: 'Download', icon: Download, new: false },
