@@ -14,7 +14,10 @@ const CourseAssistantInputSchema = z.object({
   courseTitle: z.string().describe('The title of the course.'),
   chapterTitle: z.string().describe('The title of the current chapter.'),
   videoTitle: z.string().describe('The title of the current video.'),
-  question: z.string().optional().describe("The user's question about the course content."),
+  question: z
+    .string()
+    .optional()
+    .describe("The user's question about the course content."),
   imageDataUri: z
     .string()
     .optional()
@@ -24,7 +27,9 @@ const CourseAssistantInputSchema = z.object({
 });
 export type CourseAssistantInput = z.infer<typeof CourseAssistantInputSchema>;
 
-export async function courseAssistant(input: CourseAssistantInput): Promise<string> {
+export async function courseAssistant(
+  input: CourseAssistantInput
+): Promise<string> {
   const result = await courseAssistantFlow(input);
   return result;
 }
