@@ -82,19 +82,28 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 
   const handleDownload = async (url: string, filename: string) => {
     try {
+      toast({
+        title: "Preparing Download...",
+        description: `Your download for ${filename} will begin shortly.`,
+      });
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
+      
       const a = document.createElement('a');
       a.href = blobUrl;
       a.download = filename;
       document.body.appendChild(a);
       a.click();
+      
+      // Clean up by removing the link and revoking the blob URL
       a.remove();
       window.URL.revokeObjectURL(blobUrl);
+
       toast({
         title: "Download Started",
         description: `Downloading ${filename}`,
