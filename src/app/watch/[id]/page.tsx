@@ -7,8 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PlayCircle, Lock, FileText, Download, Bot, User, Send } from 'lucide-react';
-import { useState } from 'react';
+import { PlayCircle, Lock, FileText, Download, Bot, User, Send, Paperclip } from 'lucide-react';
+import { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,14 +18,15 @@ import type { Video } from '@/lib/types';
 import { courseAssistant } from '@/ai/flows/courseAssistantFlow';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import Image from 'next/image';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
     role: 'user' | 'assistant';
     content: string;
+    imagePreview?: string;
 }
-
 
 export default function WatchPage({ params }: { params: { id: string } }) {
   const course = courses.find((c) => c.id === params.id);
@@ -34,7 +35,10 @@ export default function WatchPage({ params }: { params: { id: string } }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   if (!course) {
     notFound();
@@ -50,13 +54,45 @@ export default function WatchPage({ params }: { params: { id: string } }) {
   
   const activeChapter = course.chapters.find(c => c.id === activeChapterId);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 4 * 1024 * 1024) { // 4MB limit
+        toast({
+          variant: "destructive",
+          title: "Image too large",
+          description: "Please select an image smaller than 4MB.",
+        });
+        return;
+      }
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !activeVideo || !activeChapter) return;
+    if ((!input.trim() && !imageFile) || !activeVideo || !activeChapter) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    let imageDataUri: string | undefined = undefined;
+    if (imageFile && imagePreview) {
+        imageDataUri = imagePreview;
+    }
+
+    const userMessage: Message = { role: 'user', content: input, imagePreview: imagePreview || undefined };
     setMessages((prev) => [...prev, userMessage]);
+    
     setInput('');
+    setImageFile(null);
+    setImagePreview(null);
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+    
     setIsLoading(true);
 
     try {
@@ -65,6 +101,7 @@ export default function WatchPage({ params }: { params: { id: string } }) {
         chapterTitle: activeChapter.title,
         videoTitle: activeVideo.title,
         question: input,
+        imageDataUri,
       });
       const assistantMessage: Message = { role: 'assistant', content: assistantResponse };
       setMessages((prev) => [...prev, assistantMessage]);
@@ -140,9 +177,18 @@ export default function WatchPage({ params }: { params: { id: string } }) {
               
               <Tabs defaultValue="description" className="mt-4">
                 <TabsList>
-                    <TabsTrigger value="description">Description</TabsTrigger>
-                    <TabsTrigger value="notes">Notes</TabsTrigger>
-                    <TabsTrigger value="ai-assistant">AI Assistant</TabsTrigger>
+                    <TabsTrigger value="description">
+                        <FileText className="h-4 w-4 mr-2"/>
+                        Description
+                    </TabsTrigger>
+                    <TabsTrigger value="notes">
+                        <FileText className="h-4 w-4 mr-2"/>
+                        Notes
+                    </TabsTrigger>
+                    <TabsTrigger value="ai-assistant">
+                        <Bot className="h-4 w-4 mr-2"/>
+                        AI Assistant
+                    </TabsTrigger>
                 </TabsList>
                 <TabsContent value="description" className="mt-4">
                      <p className="text-muted-foreground">Welcome to the first video! Let's get started.</p>
@@ -181,6 +227,9 @@ export default function WatchPage({ params }: { params: { id: string } }) {
                                         </Avatar>
                                     )}
                                     <div className={cn("p-3 rounded-lg max-w-sm", message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                                        {message.imagePreview && (
+                                            <Image src={message.imagePreview} alt="User upload" width={200} height={200} className="rounded-md mb-2" />
+                                        )}
                                         <p className="text-sm">{message.content}</p>
                                     </div>
                                      {message.role === 'user' && (
@@ -202,8 +251,33 @@ export default function WatchPage({ params }: { params: { id: string } }) {
                             )}
                             </div>
                         </ScrollArea>
+                         {imagePreview && (
+                            <div className="p-4 border-t flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                <Image src={imagePreview} alt="Preview" width={40} height={40} className="rounded-md" />
+                                <span className="text-sm text-muted-foreground truncate max-w-xs">{imageFile?.name}</span>
+                                </div>
+                                <Button variant="ghost" size="sm" onClick={() => { setImagePreview(null); setImageFile(null); if(fileInputRef.current) fileInputRef.current.value = ''; }}>Remove</Button>
+                            </div>
+                        )}
                         <div className="p-4 border-t">
                             <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+                                 <Button 
+                                    type="button" 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={isLoading}
+                                 >
+                                    <Paperclip className="h-4 w-4" />
+                                 </Button>
+                                 <input 
+                                    type="file" 
+                                    ref={fileInputRef} 
+                                    onChange={handleFileChange}
+                                    className="hidden" 
+                                    accept="image/*"
+                                 />
                                 <Input 
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
@@ -211,7 +285,7 @@ export default function WatchPage({ params }: { params: { id: string } }) {
                                     disabled={isLoading}
                                     className="flex-1"
                                 />
-                                <Button type="submit" disabled={isLoading || !input.trim()}>
+                                <Button type="submit" disabled={isLoading || (!input.trim() && !imageFile)}>
                                     <Send className="h-4 w-4" />
                                 </Button>
                             </form>
