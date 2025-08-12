@@ -33,11 +33,11 @@ export default function AdminLoginPage() {
     const auth = getAuth(app);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
       // For this prototype, we'll assume if the email is the admin one, they are an admin.
       // In a real app, you would check for a custom claim or a role in the database.
-      if (email === 'admin@example.com') {
+      if (userCredential.user.email === 'admin@example.com') {
          toast({ title: "Login Successful", description: "Redirecting to admin dashboard..." });
          router.push('/admin');
       } else {
@@ -47,10 +47,10 @@ export default function AdminLoginPage() {
 
     } catch (error: any) {
       const errorCode = error.code;
-      let errorMessage = "Invalid email or password.";
+      let errorMessage = "An unknown error occurred.";
 
       if (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password' || errorCode === 'auth/invalid-credential') {
-        errorMessage = "Invalid email or password. Please try again.";
+        errorMessage = "Invalid email or password. Please check your credentials and try again.";
       } else {
         errorMessage = error.message;
       }
