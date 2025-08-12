@@ -20,7 +20,7 @@ const features: Feature[] = [
   { href: '/live-class', label: 'Live Classes', iconName: 'Video', new: true },
   { href: '/notes', label: 'PDF Notes', iconName: 'FileText', new: false },
   { href: '/test', label: 'Test', iconName: 'ClipboardCheck', new: false },
-  { href: '/timetable', label: 'Time Table', iconName: 'CalendarDays', new: false },
+  { href: '/social', label: 'Social', iconName: 'Link2', new: false },
   { href: '/help', label: 'Help', iconName: 'HelpCircle', new: false },
 ];
 

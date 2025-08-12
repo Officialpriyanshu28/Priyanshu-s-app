@@ -98,7 +98,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
       a.href = blobUrl;
       a.download = filename;
       document.body.appendChild(a);
-      a.click();
+a.click();
       
       // Clean up by removing the link and revoking the blob URL
       a.remove();
