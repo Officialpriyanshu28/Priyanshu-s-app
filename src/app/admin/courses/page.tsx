@@ -70,7 +70,7 @@ export default async function AdminCoursesPage() {
                      </Link>
                   </TableCell>
                   <TableCell>{course.instructor}</TableCell>
-                   <TableCell>₹{course.price}</TableCell>
+                   <TableCell>₹{course.price.toLocaleString('en-IN')}</TableCell>
                   <TableCell>
                     <Badge variant="default">Published</Badge>
                   </TableCell>
