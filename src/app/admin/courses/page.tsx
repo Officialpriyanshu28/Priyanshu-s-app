@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, ExternalLink } from "lucide-react";
+import { MoreHorizontal, ExternalLink, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,9 +26,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import { courses } from "@/lib/data";
+import { getCourses } from "@/services/courseService";
 
-export default function AdminCoursesPage() {
+export default async function AdminCoursesPage() {
+  const courses = await getCourses();
 
   return (
      <Card>
@@ -62,14 +63,14 @@ export default function AdminCoursesPage() {
               {courses.map((course) => (
                 <TableRow key={course.id}>
                   <TableCell className="font-medium flex items-center gap-3">
-                    <Image src={course.thumbnail} alt={course.title} width={60} height={40} className="rounded-md object-cover" data-ai-hint="course thumbnail" />
+                    <Image src={course.thumbnail} alt={course.title} width={80} height={45} className="rounded-md object-cover aspect-video" data-ai-hint="course thumbnail" />
                      <Link href={`/admin/courses/${course.id}`} className="hover:underline flex items-center gap-2">
-                        {course.title}
+                        <span className="font-semibold">{course.title}</span>
                         <ExternalLink className="h-4 w-4 text-muted-foreground" />
                      </Link>
                   </TableCell>
                   <TableCell>{course.instructor}</TableCell>
-                   <TableCell>{course.price}</TableCell>
+                   <TableCell>₹{course.price}</TableCell>
                   <TableCell>
                     <Badge variant="default">Published</Badge>
                   </TableCell>
@@ -90,7 +91,10 @@ export default function AdminCoursesPage() {
                             <Link href={`/admin/courses/${course.id}`}>Manage Content</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Unpublish</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
