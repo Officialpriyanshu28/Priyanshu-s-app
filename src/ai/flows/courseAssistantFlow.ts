@@ -33,7 +33,6 @@ const courseAssistantPrompt = ai.definePrompt(
   {
     name: 'courseAssistantPrompt',
     input: { schema: CourseAssistantInputSchema },
-    output: { schema: z.string() },
     prompt: `You are an expert AI assistant for an online learning platform. Your role is to help students understand the course material better.
 
 You will be given the context of the course, the current chapter, and the current video the student is watching. You will also be given a question from the student. If an image is provided, use it as additional context for your answer.
