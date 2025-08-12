@@ -63,6 +63,20 @@ export default function Home() {
           </div>
         </section>
 
+        {/* All Courses */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline">
+              All Courses
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {courses.map((course) => (
+              <CourseCard key={course.id} course={course} />
+            ))}
+          </div>
+        </section>
+
         {/* Categories Section (Example) */}
         <section>
           <h2 className="text-2xl md:text-3xl font-bold font-headline mb-6 text-center">
