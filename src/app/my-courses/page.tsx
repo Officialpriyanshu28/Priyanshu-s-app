@@ -2,11 +2,11 @@
 'use client';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { courses } from "@/lib/data";
+import { courses, users, recentOrders } from "@/lib/data";
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useState, useEffect } from 'react';
-import { Lock } from "lucide-react";
+import { Lock, ShoppingCart } from "lucide-react";
 
 const CourseCard = dynamic(() => import('@/components/course-card'), { 
   loading: () => <Skeleton className="h-full w-full" />,
@@ -15,19 +15,25 @@ const CourseCard = dynamic(() => import('@/components/course-card'), {
 
 
 export default function MyCoursesPage() {
-  // Mock authentication state - assume user is not logged in by default
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Mock authentication state - assume user is logged in
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Mock a logged-in user
+  const loggedInUserId = 'user-2'; 
 
   useEffect(() => {
     // In a real app, you would check for a user session or token here.
-    // For this prototype, we'll simulate the user being logged out.
-    setIsAuthenticated(false);
     setIsLoading(false);
   }, []);
 
-  // Mock: Show first 3 courses as "purchased" if authenticated
-  const purchasedCourses = courses.slice(0, 3);
+  // Filter orders for the logged-in user
+  const userOrderIds = recentOrders
+    .filter(order => order.userId === loggedInUserId)
+    .map(order => order.courseId);
+
+  // Get the full course objects for the purchased courses
+  const purchasedCourses = courses.filter(course => userOrderIds.includes(course.id));
 
   if (isLoading) {
     return (
@@ -51,11 +57,24 @@ export default function MyCoursesPage() {
       </h1>
 
       {isAuthenticated ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {purchasedCourses.map((course) => (
-            <CourseCard key={course.id} course={course} isPurchased={true} />
-          ))}
-        </div>
+        purchasedCourses.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {purchasedCourses.map((course) => (
+                <CourseCard key={course.id} course={course} isPurchased={true} />
+              ))}
+            </div>
+        ) : (
+             <div className="text-center py-16 border-2 border-dashed rounded-lg flex flex-col items-center justify-center">
+                <ShoppingCart className="h-12 w-12 text-muted-foreground mb-4" />
+              <h2 className="text-2xl font-semibold mb-2">You haven't purchased any courses yet.</h2>
+              <p className="text-muted-foreground mb-4">
+                Explore our courses and start learning today!
+              </p>
+              <Button asChild>
+                <Link href="/courses">Browse Courses</Link>
+              </Button>
+            </div>
+        )
       ) : (
         <div className="text-center py-16 border-2 border-dashed rounded-lg flex flex-col items-center justify-center">
             <Lock className="h-12 w-12 text-muted-foreground mb-4" />

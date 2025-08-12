@@ -94,7 +94,7 @@ export interface User {
   name: string;
   email: string;
   role: "Admin" | "Student" | "Instructor";
-  status: "Active" | "Inactive";
+  status: "Active" | "Inactive" | "Blocked";
   joined: string;
   avatar: string;
 }

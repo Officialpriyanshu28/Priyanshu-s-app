@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Search, UserX, UserCheck } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +57,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { users as initialUsers, type User } from "@/lib/data";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState(initialUsers);
@@ -73,6 +74,14 @@ export default function AdminUsersPage() {
       description: `The user's role has been changed to ${newRole}.`,
     });
     setIsEditOpen(false);
+  };
+
+  const handleStatusChange = (userId: string, newStatus: User['status']) => {
+    setUsers(users.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+    toast({
+      title: "User Status Updated",
+      description: `The user has been ${newStatus.toLowerCase()}.`,
+    });
   };
 
   const handleDeleteUser = (userId: string) => {
@@ -99,6 +108,19 @@ export default function AdminUsersPage() {
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getStatusBadgeVariant = (status: User['status']) => {
+    switch (status) {
+      case 'Active':
+        return 'default';
+      case 'Inactive':
+        return 'secondary';
+      case 'Blocked':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
+  }
 
   return (
      <>
@@ -156,7 +178,7 @@ export default function AdminUsersPage() {
                   </TableCell>
                   <TableCell>{user.role}</TableCell>
                   <TableCell>
-                    <Badge variant={user.status === 'Active' ? 'default' : 'secondary'}>{user.status}</Badge>
+                    <Badge variant={getStatusBadgeVariant(user.status)}>{user.status}</Badge>
                   </TableCell>
                   <TableCell>{user.joined}</TableCell>
                   <TableCell>
@@ -172,6 +194,15 @@ export default function AdminUsersPage() {
                           <DropdownMenuItem onSelect={() => openEditDialog(user)}>
                             Edit Role
                           </DropdownMenuItem>
+                          {user.status !== 'Blocked' ? (
+                            <DropdownMenuItem onSelect={() => handleStatusChange(user.id, 'Blocked')}>
+                                <UserX className="mr-2 h-4 w-4" /> Block
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem onSelect={() => handleStatusChange(user.id, 'Active')}>
+                                <UserCheck className="mr-2 h-4 w-4" /> Unblock
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuSeparator />
                            <DropdownMenuItem onSelect={() => openDeleteDialog(user)} className="text-destructive">
                                 Delete
