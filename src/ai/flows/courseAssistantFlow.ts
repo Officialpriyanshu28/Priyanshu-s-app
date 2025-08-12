@@ -13,7 +13,7 @@ const CourseAssistantInputSchema = z.object({
   courseTitle: z.string().describe('The title of the course.'),
   chapterTitle: z.string().describe('The title of the current chapter.'),
   videoTitle: z.string().describe('The title of the current video.'),
-  question: z.string().describe("The user's question about the course content."),
+  question: z.string().optional().describe("The user's question about the course content."),
   imageDataUri: z
     .string()
     .optional()
@@ -39,11 +39,16 @@ You will be given the context of the course, the current chapter, and the curren
 
 Your task is to provide a clear, concise, and helpful answer to the student's question based on the provided context. Be friendly and encouraging.
 
+If there is an image but no text question, describe the image and ask how it relates to the course material.
+
 Course: {{{courseTitle}}}
 Chapter: {{{chapterTitle}}}
 Video: {{{videoTitle}}}
 
+{{#if question}}
 Student's Question: {{{question}}}
+{{/if}}
+
 {{#if imageDataUri}}
 [Image Content]
 {{media url=imageDataUri}}
