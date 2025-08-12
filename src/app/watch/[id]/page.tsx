@@ -188,8 +188,8 @@ function WatchPageClient({ courseId }: { courseId: string }) {
         </Accordion>
       </aside>
 
-      <main className="flex-1 p-4 md:p-6" onContextMenu={handleContextMenu}>
-          <AspectRatio ratio={16 / 9} className="bg-black rounded-lg overflow-hidden shadow-lg">
+      <main className="flex-1 p-4 md:p-6">
+          <AspectRatio ratio={16 / 9} className="bg-black rounded-lg overflow-hidden shadow-lg" onContextMenu={handleContextMenu}>
             <div className="w-full h-full flex items-center justify-center">
                  {activeVideo ? (
                     <video
