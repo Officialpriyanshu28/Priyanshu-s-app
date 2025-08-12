@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -19,7 +20,6 @@ const nextConfig: NextConfig = {
     ],
     minimumCacheTTL: 60,
   },
-  swcMinify: true,
 };
 
 export default nextConfig;
