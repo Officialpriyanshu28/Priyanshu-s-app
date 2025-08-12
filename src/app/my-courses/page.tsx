@@ -2,11 +2,15 @@
 'use client';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { courses, users, recentOrders } from "@/lib/data";
+import { getCourses } from "@/services/courseService";
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useState, useEffect } from 'react';
 import { Lock, ShoppingCart } from "lucide-react";
+import type { Course } from "@/lib/types";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { ref, get } from "firebase/database";
 
 const CourseCard = dynamic(() => import('@/components/course-card'), { 
   loading: () => <Skeleton className="h-full w-full" />,
@@ -15,25 +19,45 @@ const CourseCard = dynamic(() => import('@/components/course-card'), {
 
 
 export default function MyCoursesPage() {
-  // Mock authentication state - assume user is logged in
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Mock a logged-in user
-  const loggedInUserId = 'user-2'; 
+  const [purchasedCourses, setPurchasedCourses] = useState<Course[]>([]);
 
   useEffect(() => {
-    // In a real app, you would check for a user session or token here.
-    setIsLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        try {
+          // Fetch all courses
+          const allCourses = await getCourses();
+          
+          // Fetch user's orders from Firebase RTDB
+          const ordersRef = ref(db, `orders/${user.uid}`);
+          const snapshot = await get(ordersRef);
+          
+          if (snapshot.exists()) {
+            const userOrderIds = Object.keys(snapshot.val());
+            const userCourses = allCourses.filter(course => userOrderIds.includes(course.id));
+            setPurchasedCourses(userCourses);
+          } else {
+            setPurchasedCourses([]);
+          }
+
+        } catch (error) {
+            console.error("Failed to fetch user courses:", error);
+            setPurchasedCourses([]);
+        }
+
+      } else {
+        setIsAuthenticated(false);
+        setPurchasedCourses([]);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  // Filter orders for the logged-in user
-  const userOrderIds = recentOrders
-    .filter(order => order.userId === loggedInUserId)
-    .map(order => order.courseId);
-
-  // Get the full course objects for the purchased courses
-  const purchasedCourses = courses.filter(course => userOrderIds.includes(course.id));
 
   if (isLoading) {
     return (

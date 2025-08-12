@@ -50,7 +50,6 @@ export default function CourseForm({ course }: CourseFormProps) {
         if (course) {
             // Update existing course
             await updateCourse(course.id, {
-                ...course,
                 title: data.title as string,
                 description: data.description as string,
                 price: Number(data.price),
@@ -66,7 +65,6 @@ export default function CourseForm({ course }: CourseFormProps) {
         } else {
             // Create new course
             await createCourse({
-                id: `course-${Date.now()}`, // Simple ID generation for mock
                 title: data.title as string,
                 description: data.description as string,
                 price: Number(data.price),

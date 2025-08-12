@@ -7,11 +7,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { banners, courses } from '@/lib/data';
+import { banners } from '@/lib/data';
 import Image from 'next/image';
 import type { Feature } from '@/components/features-grid';
 import FeaturesGrid from '@/components/features-grid';
 import CourseCard from '@/components/course-card';
+import { getCourses } from '@/services/courseService';
 
 const features: Feature[] = [
   { href: '/courses', label: 'All Courses', iconName: 'GraduationCap', new: false },
@@ -24,7 +25,9 @@ const features: Feature[] = [
   { href: '/help', label: 'Help', iconName: 'HelpCircle', new: false },
 ];
 
-export default function Home() {
+export default async function Home() {
+    const courses = await getCourses();
+    // Mocking purchased and latest courses for display purposes
     const purchasedCourses = courses.slice(0, 3);
     const latestCourses = courses.slice(3, 7);
 
