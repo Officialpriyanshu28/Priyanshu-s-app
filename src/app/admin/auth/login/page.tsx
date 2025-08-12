@@ -22,7 +22,8 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
     // Default credentials for easy testing.
     // For production, use environment variables for security.
     const adminEmail = "admin@example.com";
@@ -52,7 +53,8 @@ export default function AdminLoginPage() {
                 Enter your credentials to access the admin panel.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                 <Label htmlFor="email-login">Email</Label>
                 <Input 
@@ -74,9 +76,10 @@ export default function AdminLoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 </div>
-                <Button onClick={handleLogin} className="w-full">
+                <Button type="submit" className="w-full">
                  Login
                 </Button>
+              </form>
             </CardContent>
         </Card>
     </div>
