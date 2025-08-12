@@ -27,8 +27,8 @@ export default function HelpPage() {
               <p className="text-muted-foreground">
                 For any inquiries, please email us. We'll get back to you within 24 hours.
               </p>
-              <a href="mailto:support@skillzup.com" className="font-medium text-primary hover:underline">
-                support@skillzup.com
+              <a href="mailto:support@priyanshusapp.com" className="font-medium text-primary hover:underline">
+                support@priyanshusapp.com
               </a>
             </div>
           </div>
