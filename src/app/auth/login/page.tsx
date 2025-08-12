@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from "react";
+import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,7 +22,8 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   
-  const handleStudentLogin = () => {
+  const handleStudentLogin = (e: React.FormEvent) => {
+      e.preventDefault();
       toast({
         variant: "destructive",
         title: "Login Failed",
@@ -29,7 +31,8 @@ export default function LoginPage() {
       });
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = (e: React.FormEvent) => {
+    e.preventDefault();
     // Mock authentication logic - redirect to verify page
     router.push('/auth/verify');
   }
@@ -51,27 +54,36 @@ export default function LoginPage() {
               Enter your credentials to access your account.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email-login">Email</Label>
-              <Input 
-                id="email-login" 
-                type="email" 
-                placeholder="m@example.com" 
-                required 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password-login">Password</Label>
-              <Input 
-                id="password-login" 
-                type="password" 
-                required 
-              />
-            </div>
-            <Button onClick={handleStudentLogin} className="w-full bg-accent hover:bg-accent/90">
-              Login
-            </Button>
+          <CardContent>
+            <form onSubmit={handleStudentLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email-login">Email</Label>
+                <Input 
+                  id="email-login" 
+                  type="email" 
+                  placeholder="m@example.com" 
+                  required 
+                />
+              </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                   <Label htmlFor="password-login">Password</Label>
+                   <Link href="/auth/forgot-password" passHref>
+                      <Button variant="link" size="sm" className="p-0 h-auto text-xs">
+                        Forgot Password?
+                      </Button>
+                   </Link>
+                </div>
+                <Input 
+                  id="password-login" 
+                  type="password" 
+                  required 
+                />
+              </div>
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90">
+                Login
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </TabsContent>
@@ -83,26 +95,28 @@ export default function LoginPage() {
               Create a new account to start learning.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" type="text" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" type="tel" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email-signup">Email</Label>
-              <Input id="email-signup" type="email" placeholder="m@example.com" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password-signup">Password</Label>
-              <Input id="password-signup" type="password" required />
-            </div>
-            <Button onClick={handleSignUp} className="w-full bg-accent hover:bg-accent/90">
-              Sign Up
-            </Button>
+          <CardContent>
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" type="text" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input id="phone" type="tel" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email-signup">Email</Label>
+                <Input id="email-signup" type="email" placeholder="m@example.com" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password-signup">Password</Label>
+                <Input id="password-signup" type="password" required />
+              </div>
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/90">
+                Sign Up
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </TabsContent>
