@@ -8,6 +8,7 @@
  */
 
 import { ai } from '@/ai/genkit';
+import { generate } from 'genkit/generate';
 import { z } from 'zod';
 
 const ChatMessageSchema = z.object({
@@ -26,6 +27,7 @@ const AdvancedAssistantInputSchema = z.object({
     ),
   code: z.string().optional().describe('A code snippet that might contain errors.'),
   chat_history: z.array(ChatMessageSchema).optional().describe('The history of the conversation.'),
+  apiKey: z.string().optional().describe('The user-provided API key for the AI model.'),
 });
 
 export type AdvancedAssistantInput = z.infer<typeof AdvancedAssistantInputSchema>;
@@ -114,7 +116,16 @@ const advancedAssistantFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (input) => {
-    const { output } = await assistantPrompt(input);
-    return output ?? "Sorry, I couldn't process your request. Please try again.";
+    // Dynamically create a model instance with the user's API key.
+    const model = ai.model('googleai/gemini-1.5-flash-latest', {
+      auth: { apiKey: input.apiKey || process.env.GEMINI_API_KEY || '' },
+    });
+
+    const { output } = await generate({
+        prompt: await assistantPrompt.render(input),
+        model,
+    });
+    
+    return output?.text ?? "Sorry, I couldn't process your request. Please try again.";
   }
 );
