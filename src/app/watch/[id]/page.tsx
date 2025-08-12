@@ -1,6 +1,6 @@
 
 'use client';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { courses } from '@/lib/data';
 import {
@@ -197,6 +197,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
                         controls
                         autoPlay
                         src={activeVideo.url}
+                        controlsList="nodownload"
                     >
                         Your browser does not support the video tag.
                     </video>
@@ -359,14 +360,9 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 }
 
 export default function WatchPage({ params }: { params: { id: string } }) {
-  // The `use` hook is still experimental but is the recommended way to handle
-  // promises in Server Components.
-  const p = React.use(Promise.resolve(params));
-  const courseId = p.id;
+  const { id: courseId } = params;
 
   if (!courseId) {
-    // This can be a loading state or return null, though with file-based routing
-    // and defined paths, this case is less likely for an existing course.
     return notFound();
   }
 
