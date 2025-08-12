@@ -6,6 +6,8 @@ export const banners: Banner[] = [
   { image: 'https://placehold.co/1600x700.png', alt: 'SkillzUp Banner 3' },
 ];
 
+const placeholderVideoUrl = 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+
 export const courses: Course[] = [
   {
     id: 'nextjs-mastery',
@@ -20,8 +22,8 @@ export const courses: Course[] = [
         id: 'chap1',
         title: 'Introduction to Next.js',
         videos: [
-          { id: 'vid1_1', title: 'Course Overview', duration: '5:30' },
-          { id: 'vid1_2', title: 'Setting up your environment', duration: '12:15' },
+          { id: 'vid1_1', title: 'Course Overview', duration: '5:30', url: placeholderVideoUrl },
+          { id: 'vid1_2', title: 'Setting up your environment', duration: '12:15', url: placeholderVideoUrl },
         ],
         notes: [
           { id: 'note1_1', title: 'Chapter 1 Notes', url: '/notes/sample-notes.pdf' },
@@ -32,8 +34,8 @@ export const courses: Course[] = [
         id: 'chap2',
         title: 'App Router Essentials',
         videos: [
-          { id: 'vid2_1', title: 'File-based Routing', duration: '15:00' },
-          { id: 'vid2_2', title: 'Layouts and Pages', duration: '18:45' },
+          { id: 'vid2_1', title: 'File-based Routing', duration: '15:00', url: placeholderVideoUrl },
+          { id: 'vid2_2', title: 'Layouts and Pages', duration: '18:45', url: placeholderVideoUrl },
         ],
         notes: [
            { id: 'note2_1', title: 'Routing Cheatsheet', url: '/notes/sample-notes.pdf' },
@@ -54,7 +56,7 @@ export const courses: Course[] = [
         id: 'chap1_tw',
         title: 'Getting Started',
         videos: [
-          { id: 'vid1_1_tw', title: 'What is Tailwind?', duration: '8:00' },
+          { id: 'vid1_1_tw', title: 'What is Tailwind?', duration: '8:00', url: placeholderVideoUrl },
         ],
         notes: [
            { id: 'note_tw_1', title: 'Tailwind Cheatsheet', url: '/notes/sample-notes.pdf' },
@@ -75,7 +77,7 @@ export const courses: Course[] = [
         id: 'chap1_r',
         title: 'React Fundamentals',
         videos: [
-          { id: 'vid1_1_r', title: 'JSX and Components', duration: '20:10' },
+          { id: 'vid1_1_r', title: 'JSX and Components', duration: '20:10', url: placeholderVideoUrl },
         ],
         notes: []
       },
@@ -94,7 +96,7 @@ export const courses: Course[] = [
         id: 'chap1_fb',
         title: 'Firebase Auth',
         videos: [
-          { id: 'vid1_1_fb', title: 'Email & Password Login', duration: '25:00' },
+          { id: 'vid1_1_fb', title: 'Email & Password Login', duration: '25:00', url: placeholderVideoUrl },
         ],
         notes: []
       },
@@ -113,7 +115,7 @@ export const courses: Course[] = [
         id: 'chap1_js',
         title: 'Async/Await',
         videos: [
-          { id: 'vid1_1_js', title: 'Promises vs Async/Await', duration: '14:30' },
+          { id: 'vid1_1_js', title: 'Promises vs Async/Await', duration: '14:30', url: placeholderVideoUrl },
         ],
         notes: []
       },
@@ -132,7 +134,7 @@ export const courses: Course[] = [
         id: 'chap1_uiux',
         title: 'Introduction to Design Thinking',
         videos: [
-          { id: 'vid1_1_uiux', title: 'The Design Thinking Process', duration: '18:00' },
+          { id: 'vid1_1_uiux', title: 'The Design Thinking Process', duration: '18:00', url: placeholderVideoUrl },
         ],
         notes: []
       },

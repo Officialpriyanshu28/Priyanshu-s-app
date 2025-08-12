@@ -1,5 +1,6 @@
-'use client'
-import { notFound, useParams } from 'next/navigation';
+'use client';
+import { notFound } from 'next/navigation';
+import React, { use } from 'react';
 import { courses } from '@/lib/data';
 import {
   Accordion,
@@ -156,18 +157,20 @@ function WatchPageClient({ courseId }: { courseId: string }) {
       <main className="flex-1 p-4 md:p-6" onContextMenu={handleContextMenu}>
           <AspectRatio ratio={16 / 9} className="bg-black rounded-lg overflow-hidden shadow-lg">
             <div className="w-full h-full flex items-center justify-center">
-                 <video
-                    key={activeVideo?.id}
-                    className="w-full h-full"
-                    controls
-                    controlsList="nodownload"
-                    autoPlay
-                    src="" // In a real app, you would source the video URL here
-                 >
-                    Your browser does not support the video tag.
-                 </video>
-                 {/* Placeholder if no video src */}
-                 <p className="text-white">Video player for: {activeVideo?.title}</p>
+                 {activeVideo ? (
+                    <video
+                        key={activeVideo.id}
+                        className="w-full h-full"
+                        controls
+                        controlsList="nodownload"
+                        autoPlay
+                        src={activeVideo.url}
+                    >
+                        Your browser does not support the video tag.
+                    </video>
+                 ) : (
+                    <p className="text-white">Select a video to play</p>
+                 )}
             </div>
           </AspectRatio>
           <div className="mt-6">
@@ -299,9 +302,8 @@ function WatchPageClient({ courseId }: { courseId: string }) {
   );
 }
 
-export default function WatchPage() {
-  const params = useParams();
-  const courseId = Array.isArray(params.id) ? params.id[0] : params.id;
+export default function WatchPage({ params }: { params: { id: string } }) {
+  const courseId = use(Promise.resolve(params.id));
 
   if (!courseId) {
     // You can render a loading state or return null
