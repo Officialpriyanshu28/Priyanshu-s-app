@@ -1,9 +1,9 @@
 
 'use client';
 
-import React, 'useState } from 'react';
+import React, { useState } from 'react';
 import { notFound, useParams } from 'next/navigation';
-import { liveClasses } from '@/lib/data';
+import { liveClasses, courses } from '@/lib/data';
 import type { Poll, PollOption, PollRanking } from '@/lib/types';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,12 +13,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { BarChart, MessageCircle, Send, Trophy, Crown, User, Bot } from 'lucide-react';
+import { BarChart, MessageCircle, Send, Trophy, Crown, User, Bot, CalendarPlus } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
+import { createIcsFile } from '@/lib/calendar';
+import { format } from 'date-fns';
 
 const RechartsBarChart = dynamic(() => 
   import('recharts').then(mod => mod.BarChart), 
@@ -77,6 +79,27 @@ export default function LiveClassDetailPage() {
         setSubmitted(true);
     }
   }
+
+  const handleAddToCalendar = () => {
+    const icsContent = createIcsFile({
+        id: liveClass.id,
+        start: new Date(liveClass.dateTime),
+        end: new Date(new Date(liveClass.dateTime).getTime() + 60 * 60 * 1000),
+        title: liveClass.title,
+        description: `Join the live class for ${liveClass.courseTitle}.`,
+        url: window.location.href
+    });
+
+    const blob = new Blob([icsContent], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${liveClass.title}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const PollCard = () => (
     <Card>
@@ -159,6 +182,13 @@ export default function LiveClassDetailPage() {
         <div className="flex-1">
             <h1 className="text-2xl md:text-3xl font-bold font-headline mb-1">{liveClass.title}</h1>
             <p className="text-muted-foreground">{liveClass.courseTitle}</p>
+            <p className="text-muted-foreground text-sm mt-2">{format(new Date(liveClass.dateTime), "PPPP p")}</p>
+            {liveClass.status === 'upcoming' && (
+                <Button variant="outline" className="mt-4" onClick={handleAddToCalendar}>
+                    <CalendarPlus className="mr-2 h-4 w-4" />
+                    Add to Calendar
+                </Button>
+            )}
         </div>
       </div>
 

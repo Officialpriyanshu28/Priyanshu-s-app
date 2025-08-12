@@ -6,9 +6,10 @@ import Link from "next/link";
 import { courses } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, Radio, Download, Video, ArrowRight } from "lucide-react";
+import { Star, Radio, Download, Video, ArrowRight, CalendarPlus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { format } from "date-fns";
+import { createIcsFile } from "@/lib/calendar";
 
 function CourseDetailClient({ courseId }: { courseId: string }) {
   const course = courses.find((c) => c.id === courseId);
@@ -29,6 +30,29 @@ function CourseDetailClient({ courseId }: { courseId: string }) {
         return <Badge>Ended</Badge>;
     }
   }
+
+  const handleAddToCalendar = (liveClass: (typeof course.liveClasses)[0]) => {
+    if(!liveClass) return;
+    const icsContent = createIcsFile({
+        id: liveClass.id,
+        start: new Date(liveClass.dateTime),
+        // Assuming a 1-hour duration for the live class
+        end: new Date(new Date(liveClass.dateTime).getTime() + 60 * 60 * 1000),
+        title: liveClass.title,
+        description: `Join the live class for ${course.title}.`,
+        url: window.location.origin + `/live-class/${liveClass.id}`
+    });
+
+    const blob = new Blob([icsContent], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${liveClass.title}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div>
@@ -99,12 +123,20 @@ function CourseDetailClient({ courseId }: { courseId: string }) {
                                             </Button>
                                         </>
                                     ) : (
+                                        <>
                                         <Button asChild>
                                             <Link href={`/live-class/${liveClass.id}`}>
                                                 {liveClass.status === 'live' ? 'Join Now' : 'Go to Class'}
                                                 <ArrowRight className="ml-2 h-4 w-4" />
                                             </Link>
                                         </Button>
+                                        {liveClass.status === 'upcoming' && (
+                                            <Button variant="outline" onClick={() => handleAddToCalendar(liveClass)}>
+                                                <CalendarPlus className="mr-2 h-4 w-4"/>
+                                                Add to Calendar
+                                            </Button>
+                                        )}
+                                        </>
                                     )}
                                 </CardFooter>
                             </Card>
