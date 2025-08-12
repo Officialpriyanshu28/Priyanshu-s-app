@@ -18,8 +18,8 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleAuth = () => {
-    // Mock authentication logic
-    router.push('/');
+    // Mock authentication logic - redirect to verify page
+    router.push('/auth/verify');
   }
 
   return (
