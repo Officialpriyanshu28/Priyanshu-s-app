@@ -13,6 +13,7 @@ export interface Course {
   instructor: string;
   durationHours: number;
   liveClasses?: LiveClass[];
+  assignments?: Assignment[];
 }
 
 export interface Chapter {
@@ -86,4 +87,23 @@ export interface PollRanking {
   rank: number;
   name: string;
   timeSeconds: number;
+}
+
+export interface Assignment {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  totalMarks: number;
+  submission?: Submission;
+}
+
+export interface Submission {
+  id: string;
+  submittedAt: string;
+  fileUrl: string;
+  fileName: string;
+  status: 'submitted' | 'graded';
+  grade?: number;
+  feedback?: string;
 }

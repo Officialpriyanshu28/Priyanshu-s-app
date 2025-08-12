@@ -23,7 +23,8 @@ import {
     Bot,
     GraduationCap,
     Radio,
-    Download
+    Download,
+    FilePenLine
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,7 @@ const features = [
   { href: '/courses', label: 'All Courses', icon: GraduationCap, new: false },
   { href: '/my-courses', label: 'My Courses', icon: PlaySquare, new: false },
   { href: '/notifications', label: 'Notifications', icon: Bell, new: true },
+  { href: '/assignments', label: 'Assignments', icon: FilePenLine, new: true },
   { href: '/notes', label: 'PDF Notes', icon: FileText, new: false },
   { href: '/test', label: 'Test', icon: ClipboardCheck, new: false },
   { href: '/timetable', label: 'Time Table', icon: CalendarDays, new: false },
