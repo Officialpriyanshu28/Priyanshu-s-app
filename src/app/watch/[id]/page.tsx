@@ -359,7 +359,10 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 }
 
 export default function WatchPage({ params }: { params: { id: string } }) {
-  const courseId = params.id;
+  // The `use` hook is still experimental but is the recommended way to handle
+  // promises in Server Components.
+  const p = React.use(Promise.resolve(params));
+  const courseId = p.id;
 
   if (!courseId) {
     // This can be a loading state or return null, though with file-based routing
