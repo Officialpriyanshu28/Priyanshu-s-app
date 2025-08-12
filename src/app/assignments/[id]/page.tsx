@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, notFound, useRouter } from 'next/navigation';
 import { courses } from '@/lib/data';
 import type { Assignment, Course } from '@/lib/types';
@@ -16,7 +16,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -39,6 +38,15 @@ export default function AssignmentDetailPage() {
 
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOverdue, setIsOverdue] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    if (assignment) {
+      setIsOverdue(new Date(assignment.dueDate) < new Date());
+    }
+  }, [assignment]);
 
   if (!assignment || !course) {
     notFound();
@@ -69,11 +77,6 @@ export default function AssignmentDetailPage() {
         description: 'Your assignment has been successfully submitted.',
       });
       setIsSubmitting(false);
-      // Here you would typically redirect or update the UI
-      // For this mock, we'll just reload to show the "submitted" state.
-      // In a real app, you would invalidate a query or update state.
-      router.refresh(); 
-       // This is a mock update. In a real app, data would come from the server.
        const mockSubmission = {
             id: 'sub-new',
             submittedAt: new Date().toISOString(),
@@ -82,10 +85,9 @@ export default function AssignmentDetailPage() {
             status: 'submitted' as const
        }
        assignment.submission = mockSubmission;
+       router.refresh(); 
     }, 1500);
   };
-  
-  const isOverdue = new Date(assignment.dueDate) < new Date();
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8 md:px-6">
