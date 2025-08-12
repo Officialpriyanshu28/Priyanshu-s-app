@@ -121,8 +121,8 @@ function CourseDetailClient({ courseId }: { courseId: string }) {
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-card p-4 border-t md:hidden">
          <div className="flex items-center justify-between">
             <div className="flex items-baseline gap-2">
-                <p className="text-2xl font-bold">{course.price}</p>
-                <p className="text-md text-muted-foreground line-through">{course.mrp}</p>
+                <p className="text-2xl font-bold">₹{course.price}</p>
+                <p className="text-md text-muted-foreground line-through">₹{course.mrp}</p>
             </div>
             <Button className="bg-accent hover:bg-accent/90">Buy Now</Button>
          </div>
@@ -132,8 +132,8 @@ function CourseDetailClient({ courseId }: { courseId: string }) {
       <div className="hidden md:block fixed top-24 right-6 w-80">
           <div className="bg-card border rounded-lg shadow-sm p-6 space-y-4">
                <div className="flex items-baseline gap-2">
-                <p className="text-3xl font-bold">{course.price}</p>
-                <p className="text-lg text-muted-foreground line-through">{course.mrp}</p>
+                <p className="text-3xl font-bold">₹{course.price}</p>
+                <p className="text-lg text-muted-foreground line-through">₹{course.mrp}</p>
                 <Badge variant="destructive">{discount}% off</Badge>
             </div>
             <Button className="w-full bg-accent hover:bg-accent/90 text-lg">Buy Now</Button>
