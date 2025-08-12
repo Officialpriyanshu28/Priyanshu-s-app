@@ -30,10 +30,20 @@ interface Message {
     imagePreview?: string;
 }
 
-function WatchPageClient({ courseId }: { courseId: string }) {
+export default function WatchPage() {
+  const params = useParams();
+  const courseId = Array.isArray(params.id) ? params.id[0] : params.id;
   const course = courses.find((c) => c.id === courseId);
-  const [activeVideo, setActiveVideo] = useState<Video | null>(course?.chapters[0]?.videos[0] || null);
-  const [activeChapterId, setActiveChapterId] = useState<string | null>(course?.chapters[0]?.id || null);
+  const [activeVideo, setActiveVideo] = useState<Video | null>(null);
+  const [activeChapterId, setActiveChapterId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (course) {
+      setActiveVideo(course.chapters[0]?.videos[0] || null);
+      setActiveChapterId(course.chapters[0]?.id || null);
+    }
+  }, [course]);
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +86,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 
 
   if (!course) {
-    notFound();
+    return notFound();
   }
 
   const handleVideoSelect = (video: Video, chapterId: string) => {
@@ -357,16 +367,4 @@ function WatchPageClient({ courseId }: { courseId: string }) {
       </main>
     </div>
   );
-}
-
-export default function WatchPage({ params }: { params: { id: string } }) {
-  const courseId = params.id;
-
-  if (!courseId) {
-    // This can be a loading state or return null, though with file-based routing
-    // this page will not be rendered if the id is missing.
-    return notFound();
-  }
-
-  return <WatchPageClient courseId={courseId} />;
 }
