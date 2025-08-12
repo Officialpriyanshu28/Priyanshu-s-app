@@ -131,7 +131,6 @@ const ImageSolverTab = ({
               </Button>
             </div>
 
-            {isLoading && <div className="text-center p-8"><Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" /></div>}
             {response && <RenderResponse response={response} />}
         </CardContent>
     </Card>
@@ -165,7 +164,6 @@ const TextGeniusTab = ({
                 Create Mind Map
               </Button>
           </div>
-          {isLoading && <div className="text-center p-8"><Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" /></div>}
           {response && <RenderResponse response={response} />}
         </CardContent>
     </Card>
@@ -195,7 +193,6 @@ const CodeDoctorTab = ({
               </Button>
             </div>
 
-            {isLoading && <div className="text-center p-8"><Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" /></div>}
             {response && <RenderResponse response={response} />}
         </CardContent>
       </Card>
@@ -273,6 +270,7 @@ export default function AiAssistantPage() {
         return;
       }
       input.question = text; 
+      input.mode = modeToUse;
       hasInput = true;
     } else if (modeToUse === 'code_doctor') {
       if (!code) {
@@ -323,22 +321,18 @@ export default function AiAssistantPage() {
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
     
-    if (newTab === 'chat') setMode('chat');
-    if (newTab === 'image_solver') setMode('image_solver');
-    if (newTab === 'text_genius') setMode('text_genius_summary');
-    if (newTab === 'code_doctor') setMode('code_doctor');
-    
     setResponse('');
     setQuestion('');
     setCode('');
     setText('');
     setImage(null);
     setImagePreview(null);
-    if(newTab !== 'chat') setChatHistory([]);
+    if(newTab !== 'chat') {
+        setChatHistory([]);
+    }
   }
   
   const handleTextGenSubmit = (textGenMode: 'text_genius_summary' | 'text_genius_mindmap') => {
-    setMode(textGenMode);
     handleSubmit(textGenMode);
   }
 
@@ -355,6 +349,58 @@ export default function AiAssistantPage() {
         </CardContent>
       </Card>
   )
+
+  const CurrentTabContent = () => {
+    switch(activeTab) {
+        case 'chat':
+            return (
+                <ChatInterface 
+                    handleSubmit={handleSubmit}
+                    isLoading={isLoading}
+                    question={question}
+                    setQuestion={setQuestion}
+                    chatHistory={chatHistory}
+                    chatScrollAreaRef={chatScrollAreaRef}
+                />
+            );
+        case 'image_solver':
+            return (
+                 <ImageSolverTab
+                    image={image}
+                    imagePreview={imagePreview}
+                    handleImageChange={handleImageChange}
+                    question={question}
+                    setQuestion={setQuestion}
+                    handleSubmit={() => handleSubmit('image_solver')}
+                    isLoading={isLoading}
+                    response={response}
+                 />
+            );
+        case 'text_genius':
+            return (
+                 <TextGeniusTab
+                    text={text}
+                    setText={setText}
+                    handleTextGenSubmit={handleTextGenSubmit}
+                    isLoading={isLoading}
+                    mode={mode}
+                    response={response}
+                 />
+            );
+        case 'code_doctor':
+            return (
+                 <CodeDoctorTab
+                    code={code}
+                    setCode={setCode}
+                    handleSubmit={() => handleSubmit('code_doctor')}
+                    isLoading={isLoading}
+                    response={response}
+                 />
+            );
+        default:
+            return null;
+    }
+  }
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:px-6">
@@ -376,56 +422,11 @@ export default function AiAssistantPage() {
           <TabsTrigger value="code_doctor"><Code className="mr-2 h-4 w-4" /> Code Doctor</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="chat">
-            <ChatInterface 
-                handleSubmit={handleSubmit}
-                isLoading={isLoading}
-                question={question}
-                setQuestion={setQuestion}
-                chatHistory={chatHistory}
-                chatScrollAreaRef={chatScrollAreaRef}
-            />
-        </TabsContent>
-        
-        <TabsContent value="image_solver">
-          <Suspense fallback={<TabContentLoader/>}>
-             <ImageSolverTab
-                image={image}
-                imagePreview={imagePreview}
-                handleImageChange={handleImageChange}
-                question={question}
-                setQuestion={setQuestion}
-                handleSubmit={handleSubmit}
-                isLoading={isLoading && mode === 'image_solver'}
-                response={response}
-             />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="text_genius">
-           <Suspense fallback={<TabContentLoader/>}>
-             <TextGeniusTab
-                text={text}
-                setText={setText}
-                handleTextGenSubmit={handleTextGenSubmit}
-                isLoading={isLoading && (mode === 'text_genius_summary' || mode === 'text_genius_mindmap')}
-                mode={mode}
-                response={response}
-             />
-           </Suspense>
-        </TabsContent>
-
-        <TabsContent value="code_doctor">
-           <Suspense fallback={<TabContentLoader/>}>
-             <CodeDoctorTab
-                code={code}
-                setCode={setCode}
-                handleSubmit={handleSubmit}
-                isLoading={isLoading && mode === 'code_doctor'}
-                response={response}
-             />
+        <div className="mt-4">
+            <Suspense fallback={<TabContentLoader />}>
+                <CurrentTabContent />
             </Suspense>
-        </TabsContent>
+        </div>
       </Tabs>
       
     </div>

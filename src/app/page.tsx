@@ -17,7 +17,7 @@ const features: Feature[] = [
   { href: '/courses', label: 'All Courses', iconName: 'GraduationCap', new: false },
   { href: '/my-courses', label: 'My Courses', iconName: 'PlaySquare', new: false },
   { href: '/ai-assistant', label: 'AI Assistant', iconName: 'Bot', new: true },
-  { href: '/notifications', label: 'Notifications', iconName: 'Bell', new: true },
+  { href: '/live-class', label: 'Live Classes', iconName: 'Video', new: true },
   { href: '/notes', label: 'PDF Notes', iconName: 'FileText', new: false },
   { href: '/test', label: 'Test', iconName: 'ClipboardCheck', new: false },
   { href: '/timetable', label: 'Time Table', iconName: 'CalendarDays', new: false },
