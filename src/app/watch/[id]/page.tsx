@@ -1,6 +1,7 @@
+
 'use client';
 import { notFound } from 'next/navigation';
-import React, { use } from 'react';
+import React, { use, useEffect } from 'react';
 import { courses } from '@/lib/data';
 import {
   Accordion,
@@ -39,7 +40,40 @@ function WatchPageClient({ courseId }: { courseId: string }) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement || !activeVideo) return;
+
+    const handleTimeUpdate = () => {
+        if (videoElement.currentTime > 0) {
+            localStorage.setItem(`video-progress-${activeVideo.id}`, videoElement.currentTime.toString());
+        }
+    };
+
+    const handleLoadedData = () => {
+        const savedTime = localStorage.getItem(`video-progress-${activeVideo.id}`);
+        if (savedTime) {
+            videoElement.currentTime = parseFloat(savedTime);
+        }
+    };
+    
+    // Save progress every 5 seconds
+    const intervalId = setInterval(handleTimeUpdate, 5000);
+
+    videoElement.addEventListener('loadeddata', handleLoadedData);
+
+    // Initial load
+    handleLoadedData();
+
+    return () => {
+        clearInterval(intervalId);
+        videoElement.removeEventListener('loadeddata', handleLoadedData);
+    };
+  }, [activeVideo]);
+
 
   if (!course) {
     notFound();
@@ -159,6 +193,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
             <div className="w-full h-full flex items-center justify-center">
                  {activeVideo ? (
                     <video
+                        ref={videoRef}
                         key={activeVideo.id}
                         className="w-full h-full"
                         controls
