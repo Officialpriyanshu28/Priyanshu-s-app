@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,9 +56,11 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { users as initialUsers, type User } from "@/lib/data";
+import { Input } from "@/components/ui/input";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState(initialUsers);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
@@ -93,16 +95,40 @@ export default function AdminUsersPage() {
     setIsDeleteAlertOpen(true);
   };
 
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
      <>
      <Card>
         <CardHeader>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>
-            Manage your users and their roles.
-          </CardDescription>
+          <div className="flex justify-between items-center">
+             <div>
+                <CardTitle>Users</CardTitle>
+                <CardDescription>
+                    Manage your users and their roles.
+                </CardDescription>
+             </div>
+             <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add User
+             </Button>
+          </div>
         </CardHeader>
         <CardContent>
+          <div className="mb-4">
+             <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input 
+                    placeholder="Search by name or email..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                />
+             </div>
+          </div>
           <Table>
             <TableHeader>
               <TableRow>
@@ -116,7 +142,7 @@ export default function AdminUsersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell className="font-medium flex items-center gap-3">
                     <Avatar>
