@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -77,17 +78,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Categories Section (Example) */}
-        <section>
-          <h2 className="text-2xl md:text-3xl font-bold font-headline mb-6 text-center">
-            Explore by Category
-          </h2>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button variant="secondary" size="lg">Web Development</Button>
-            <Button variant="secondary" size="lg">Web Design</Button>
-            <Button variant="secondary" size="lg">Full-stack</Button>
-          </div>
-        </section>
       </div>
     </div>
   );
