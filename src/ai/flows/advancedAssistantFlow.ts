@@ -11,7 +11,6 @@
 import { ai } from '@/ai/genkit';
 import { generate } from 'genkit';
 import { z } from 'zod';
-import { googleAI } from '@genkit-ai/googleai';
 
 const ChatMessageSchema = z.object({
   role: z.enum(['user', 'model']),
@@ -45,7 +44,7 @@ const assistantPrompt = ai.definePrompt({
   output: { schema: z.string() },
   prompt: `You are an advanced AI assistant. Your capabilities are defined by the 'mode' provided.
 
-{{#if (eq mode "image_solver")}}
+{{#if image}}
 You are an expert problem solver. The user has provided an image and a question.
 Analyze the image and the question carefully, and provide a clear, step-by-step solution.
 If the question is simple, provide a direct answer.
@@ -80,7 +79,7 @@ Text to create a mind map from:
 "{{{question}}}"
 {{/if}}
 
-{{#if (eq mode "code_doctor")}}
+{{#if code}}
 You are an expert code debugger. The user has provided a code snippet that may have errors.
 Analyze the code, identify any errors, and provide a corrected version.
 Explain the error and the fix clearly in a Markdown block.
@@ -91,21 +90,29 @@ Code to analyze:
 \`\`\`
 {{/if}}
 
-{{#if (eq mode "chat")}}
+{{#if chat_history}}
 You are a helpful and friendly AI chat assistant.
 Continue the conversation based on the provided history.
 Be concise and helpful.
 
-{{#if chat_history}}
 Conversation History:
 {{#each chat_history}}
 **{{role}}**: {{{content}}}
 {{/each}}
-{{/if}}
 
 Current question:
 **user**: {{{question}}}
 **model**:
+{{else}}
+  {{#if (eq mode "chat")}}
+  You are a helpful and friendly AI chat assistant.
+  Start the conversation with the user.
+  Be concise and helpful.
+  
+  Current question:
+  **user**: {{{question}}}
+  **model**:
+  {{/if}}
 {{/if}}
 `,
 });
@@ -117,9 +124,64 @@ const advancedAssistantFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (input) => {
-    // Dynamically create a model instance with the user's API key.
+    let promptText = '';
+
+    if (input.mode === 'image_solver') {
+      promptText = `You are an expert problem solver. The user has provided an image and a question.
+Analyze the image and the question carefully, and provide a clear, step-by-step solution.
+If the question is simple, provide a direct answer.
+
+Image: {{media url=image}}
+Question: {{{question}}}`;
+    } else if (input.mode === 'text_genius_summary') {
+      promptText = `You are an expert summarizer. The user has provided a block of text.
+Generate a concise and easy-to-understand summary of the text.
+The summary should capture the key points and main ideas.
+
+Text to summarize:
+"{{{question}}}"`;
+    } else if (input.mode === 'text_genius_mindmap') {
+      promptText = `You are an expert at creating structured mind maps. The user has provided a block of text.
+Generate a mind map in Markdown format.
+Use nested lists with headings (e.g., ###) for different branches.
+
+Example of a mind map format:
+### Main Idea
+- **Key Concept 1**
+  - Sub-point 1.1
+  - Sub-point 1.2
+- **Key Concept 2**
+  - Sub-point 2.1
+
+Text to create a mind map from:
+"{{{question}}}"`;
+    } else if (input.mode === 'code_doctor') {
+      promptText = `You are an expert code debugger. The user has provided a code snippet that may have errors.
+Analyze the code, identify any errors, and provide a corrected version.
+Explain the error and the fix clearly in a Markdown block.
+
+Code to analyze:
+\`\`\`
+{{{code}}}
+\`\`\`
+`;
+    } else if (input.mode === 'chat') {
+        let history = '';
+        if (input.chat_history && input.chat_history.length > 0) {
+            history = 'Conversation History:\n' + input.chat_history.map(m => `**${m.role}**: ${m.content}`).join('\n') + '\n\n';
+        }
+      promptText = `You are a helpful and friendly AI chat assistant.
+Continue the conversation based on the provided history.
+Be concise and helpful.
+
+${history}Current question:
+**user**: {{{question}}}
+**model**:
+`;
+    }
+
     const { output } = await generate({
-        prompt: await assistantPrompt.render(input),
+        prompt: await ai.prompt(promptText).render(input),
         model: 'gemini-1.5-flash-latest'
     });
     
