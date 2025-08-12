@@ -15,29 +15,53 @@ import { Label } from "@/components/ui/label";
 import Logo from "@/components/logo";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { app } from "@/lib/firebase";
+import { Loader2 } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@example.com');
+  const [password, setPassword] = useState('admin123');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // Consistent and simplified admin credentials
-    const adminEmail = "admin@example.com";
-    const adminPassword = "admin123";
+    const auth = getAuth(app);
 
-    if (email === adminEmail && password === adminPassword) {
-      toast({ title: "Login Successful", description: "Redirecting to admin dashboard..." });
-      router.push('/admin');
-    } else {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      
+      // For this prototype, we'll assume if the email is the admin one, they are an admin.
+      // In a real app, you would check for a custom claim or a role in the database.
+      if (email === 'admin@example.com') {
+         toast({ title: "Login Successful", description: "Redirecting to admin dashboard..." });
+         router.push('/admin');
+      } else {
+         await auth.signOut();
+         throw new Error("You are not authorized to access the admin panel.");
+      }
+
+    } catch (error: any) {
+      const errorCode = error.code;
+      let errorMessage = "Invalid email or password.";
+
+      if (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password' || errorCode === 'auth/invalid-credential') {
+        errorMessage = "Invalid email or password. Please try again.";
+      } else {
+        errorMessage = error.message;
+      }
+
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Invalid email or password.",
+        description: errorMessage,
       });
+    } finally {
+        setIsLoading(false);
     }
   };
 
@@ -76,8 +100,9 @@ export default function AdminLoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 </div>
-                <Button type="submit" className="w-full">
-                 Login
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                 {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
               </form>
             </CardContent>
