@@ -1,7 +1,14 @@
 import Link from "next/link";
-import CourseCard from "@/components/course-card";
 import { Button } from "@/components/ui/button";
 import { courses } from "@/lib/data";
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const CourseCard = dynamic(() => import('@/components/course-card'), { 
+  loading: () => <Skeleton className="h-full w-full" />,
+  ssr: false 
+});
+
 
 export default function MyCoursesPage() {
   // Mock: Show first 3 courses as "purchased"
