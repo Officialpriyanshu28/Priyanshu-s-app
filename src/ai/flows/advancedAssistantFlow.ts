@@ -124,64 +124,32 @@ const advancedAssistantFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (input) => {
-    let promptText = '';
+    
+    // The issue was that Handlebars helpers like 'eq' are not enabled by default.
+    // The prompt has been refactored to use simple '#if' blocks which check for the presence of a key.
+    // To make this work, we only pass the relevant data for the current mode to the prompt.
+    let promptData: any = {
+      mode: input.mode,
+      question: input.question,
+    };
 
     if (input.mode === 'image_solver') {
-      promptText = `You are an expert problem solver. The user has provided an image and a question.
-Analyze the image and the question carefully, and provide a clear, step-by-step solution.
-If the question is simple, provide a direct answer.
-
-Image: {{media url=image}}
-Question: {{{question}}}`;
+      promptData.image = input.image;
     } else if (input.mode === 'text_genius_summary') {
-      promptText = `You are an expert summarizer. The user has provided a block of text.
-Generate a concise and easy-to-understand summary of the text.
-The summary should capture the key points and main ideas.
-
-Text to summarize:
-"{{{question}}}"`;
+      // The prompt uses 'question' for the text to summarize
     } else if (input.mode === 'text_genius_mindmap') {
-      promptText = `You are an expert at creating structured mind maps. The user has provided a block of text.
-Generate a mind map in Markdown format.
-Use nested lists with headings (e.g., ###) for different branches.
-
-Example of a mind map format:
-### Main Idea
-- **Key Concept 1**
-  - Sub-point 1.1
-  - Sub-point 1.2
-- **Key Concept 2**
-  - Sub-point 2.1
-
-Text to create a mind map from:
-"{{{question}}}"`;
+      // The prompt uses 'question' for the text to create a mind map from
     } else if (input.mode === 'code_doctor') {
-      promptText = `You are an expert code debugger. The user has provided a code snippet that may have errors.
-Analyze the code, identify any errors, and provide a corrected version.
-Explain the error and the fix clearly in a Markdown block.
-
-Code to analyze:
-\`\`\`
-{{{code}}}
-\`\`\`
-`;
+      promptData.code = input.code;
     } else if (input.mode === 'chat') {
-        let history = '';
-        if (input.chat_history && input.chat_history.length > 0) {
-            history = 'Conversation History:\n' + input.chat_history.map(m => `**${m.role}**: ${m.content}`).join('\n') + '\n\n';
-        }
-      promptText = `You are a helpful and friendly AI chat assistant.
-Continue the conversation based on the provided history.
-Be concise and helpful.
-
-${history}Current question:
-**user**: {{{question}}}
-**model**:
-`;
+      promptData.chat_history = input.chat_history;
     }
+    
+    // Render the prompt with the correct data
+    const renderedPrompt = await assistantPrompt.render(promptData);
 
     const { output } = await generate({
-        prompt: await ai.prompt(promptText).render(input),
+        prompt: renderedPrompt.prompt, // Pass the rendered prompt string
         model: 'gemini-1.5-flash-latest'
     });
     
