@@ -14,6 +14,7 @@ export interface Chapter {
   id: string;
   title: string;
   videos: Video[];
+  notes: Note[];
 }
 
 export interface Video {
@@ -25,4 +26,10 @@ export interface Video {
 export interface Banner {
   image: string;
   alt: string;
+}
+
+export interface Note {
+  id: string;
+  title: string;
+  url: string;
 }
