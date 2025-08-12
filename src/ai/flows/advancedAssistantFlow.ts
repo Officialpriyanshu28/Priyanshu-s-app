@@ -23,7 +23,7 @@ const AdvancedAssistantInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      "A photo of a question or a problem, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "A photo of a question or a problem, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'"
     ),
   code: z.string().optional().describe('A code snippet that might contain errors.'),
   chat_history: z.array(ChatMessageSchema).optional().describe('The history of the conversation.'),
@@ -102,7 +102,6 @@ Current question:
   
   const { output } = await ai.generate({
       prompt: promptContent,
-      model: 'gemini-1.5-flash-latest'
   });
     
   return output?.text ?? "Sorry, I couldn't process your request. Please try again.";
