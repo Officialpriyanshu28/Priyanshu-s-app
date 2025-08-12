@@ -1,7 +1,7 @@
 
 'use client';
 import { notFound } from 'next/navigation';
-import React, { use, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { courses } from '@/lib/data';
 import {
   Accordion,
@@ -359,11 +359,12 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 }
 
 export default function WatchPage({ params }: { params: { id: string } }) {
-  const courseId = use(Promise.resolve(params.id));
+  const courseId = params.id;
 
   if (!courseId) {
-    // You can render a loading state or return null
-    return null;
+    // This can be a loading state or return null, though with file-based routing
+    // and defined paths, this case is less likely for an existing course.
+    return notFound();
   }
 
   return <WatchPageClient courseId={courseId} />;
