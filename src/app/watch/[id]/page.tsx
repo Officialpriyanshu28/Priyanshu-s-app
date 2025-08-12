@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { PlayCircle, Lock, FileText, Download, MessageSquare, ShieldAlert } from 'lucide-react';
+import { PlayCircle, FileText, Download, MessageSquare, ShieldAlert } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { AspectRatio } from "@/components/ui/aspect-ratio";
