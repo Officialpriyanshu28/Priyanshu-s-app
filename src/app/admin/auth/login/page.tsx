@@ -24,8 +24,7 @@ export default function AdminLoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
-    // Default credentials for easy testing.
-    // For production, use environment variables for security.
+    
     const adminEmail = "kumarikiran91133963@gmail.com";
     const adminPassword = "Priyanshu9113396384";
 
