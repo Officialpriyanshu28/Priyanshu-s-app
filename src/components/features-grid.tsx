@@ -9,7 +9,6 @@ import {
     PlaySquare,
     Bot,
     Bell,
-    FilePenLine,
     FileText,
     ClipboardCheck,
     CalendarDays,
@@ -17,7 +16,8 @@ import {
     Link2,
     Download,
     Code2,
-    type LucideIcon
+    type LucideIcon,
+    FilePenLine,
 } from 'lucide-react';
 
 const iconMap: { [key: string]: LucideIcon } = {

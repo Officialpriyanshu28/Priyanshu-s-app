@@ -1,5 +1,4 @@
 
-
 import type { Course, Banner, LiveClass } from './types';
 
 export const banners: Banner[] = [
@@ -10,6 +9,35 @@ export const banners: Banner[] = [
 
 const placeholderVideoUrl = 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 const placeholderPdfUrl = '/notes/sample-notes.pdf';
+
+export const liveClasses: LiveClass[] = [
+    {
+        id: 'lc-1',
+        courseTitle: 'Next.js 14 Mastery',
+        title: 'Live Q&A: Next.js App Router',
+        instructor: 'John Doe',
+        dateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+        status: 'upcoming'
+    },
+    {
+        id: 'lc-2',
+        courseTitle: 'Next.js 14 Mastery',
+        title: 'Deep Dive into Server Components',
+        instructor: 'John Doe',
+        dateTime: new Date().toISOString(),
+        status: 'live'
+    },
+    {
+        id: 'lc-3',
+        courseTitle: 'Next.js 14 Mastery',
+        title: 'Introduction to Next.js (Recording)',
+        instructor: 'John Doe',
+        dateTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        status: 'ended',
+        recordingUrl: placeholderVideoUrl,
+        notesUrl: placeholderPdfUrl,
+    }
+];
 
 export const courses: Course[] = [
   {
@@ -94,56 +122,7 @@ export const courses: Course[] = [
         }
       },
     ],
-    liveClasses: [
-        {
-            id: 'lc-1',
-            title: 'Live Q&A: Next.js App Router',
-            instructor: 'John Doe',
-            dateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
-            status: 'upcoming'
-        },
-        {
-            id: 'lc-2',
-            title: 'Deep Dive into Server Components',
-            instructor: 'John Doe',
-            dateTime: new Date().toISOString(),
-            status: 'live'
-        },
-        {
-            id: 'lc-3',
-            title: 'Introduction to Next.js (Recording)',
-            instructor: 'John Doe',
-            dateTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
-            status: 'ended',
-            recordingUrl: placeholderVideoUrl,
-            notesUrl: placeholderPdfUrl,
-        }
-    ],
-    assignments: [
-      {
-        id: 'as1',
-        title: 'Build a Personal Portfolio',
-        description: 'Create a personal portfolio website using the concepts learned in the first two chapters. The portfolio should be responsive and have at least three pages.',
-        dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days from now
-        totalMarks: 100,
-        submission: {
-          id: 'sub1',
-          submittedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-          fileUrl: '#',
-          fileName: 'portfolio-submission.zip',
-          status: 'graded',
-          grade: 85,
-          feedback: 'Great work on the portfolio! The design is clean and responsive. Consider adding more project details on the project page.'
-        }
-      },
-      {
-        id: 'as2',
-        title: 'App Router API Route',
-        description: 'Implement a simple API route using the App Router that returns a list of products. The data can be static.',
-        dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days from now
-        totalMarks: 50
-      }
-    ]
+    liveClasses: liveClasses.filter(lc => lc.courseTitle === 'Next.js 14 Mastery'),
   },
   {
     id: 'tailwind-css-pro',
@@ -167,15 +146,6 @@ export const courses: Course[] = [
         ]
       },
     ],
-    assignments: [
-      {
-        id: 'as3',
-        title: 'Recreate a Website Homepage',
-        description: 'Choose a popular website and recreate its homepage using only Tailwind CSS for styling. Focus on accuracy and responsiveness.',
-        dueDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000).toISOString(), // 12 days from now
-        totalMarks: 100
-      }
-    ]
   },
   {
     id: 'react-deep-dive',
