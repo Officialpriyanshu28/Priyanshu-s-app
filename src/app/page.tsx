@@ -1,101 +1,80 @@
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import {
-  Bell,
-  BookOpen,
-  ClipboardCheck,
-  FileText,
-  HelpCircle,
-  Link2,
-  Calendar,
-  Bot,
-  User,
-} from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-
-const features = [
-  {
-    title: 'My Courses',
-    href: '/my-courses',
-    icon: BookOpen,
-    description: 'Access your purchased courses.',
-  },
-  {
-    title: 'Notifications',
-    href: '/notifications',
-    icon: Bell,
-    description: 'View your latest notifications.',
-  },
-  {
-    title: 'Profile',
-    href: '/profile',
-    icon: User,
-    description: 'Manage your profile details.',
-  },
-  {
-    title: 'Test',
-    href: '/test',
-    icon: ClipboardCheck,
-    description: 'Take tests to check knowledge.',
-  },
-  {
-    title: 'Time Table',
-    href: '/timetable',
-    icon: Calendar,
-    description: 'Check your class schedule.',
-  },
-  {
-    title: 'PDF Notes',
-    href: '/notes',
-    icon: FileText,
-    description: 'Access all course notes here.',
-  },
-  {
-    title: 'Help',
-    href: '/help',
-    icon: HelpCircle,
-    description: 'Get help and support.',
-  },
-  {
-    title: 'AI Assistant',
-    href: '/ai-assistant',
-    icon: Bot,
-    description: 'Get help from AI assistant.',
-  },
-  {
-    title: 'Social Links',
-    href: '/social',
-    icon: Link2,
-    description: 'Connect with us on social media.',
-  },
-];
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import CourseCard from '@/components/course-card';
+import { banners, courses } from '@/lib/data';
+import Image from 'next/image';
 
 export default function Home() {
+  const featuredCourses = courses.slice(0, 4);
+
   return (
-    <div className="container mx-auto px-4 py-8 md:px-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline text-3xl">Dashboard</CardTitle>
-          <CardDescription>Welcome back! Here's your dashboard.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {features.map((feature) => (
-              <Link href={feature.href} key={feature.title}>
-                <div className="flex flex-col items-center justify-center p-4 border rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors h-full text-center">
-                  <feature.icon className="h-8 w-8 mb-2" />
-                  <p className="font-semibold text-sm">{feature.title}</p>
+    <div>
+      {/* Hero Section with Carousel */}
+      <div className="w-full">
+        <Carousel
+          opts={{
+            align: 'start',
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {banners.map((banner, index) => (
+              <CarouselItem key={index}>
+                <div className="relative aspect-[16/7]">
+                  <Image
+                    src={banner.image}
+                    alt={banner.alt}
+                    fill
+                    className="object-cover"
+                    data-ai-hint="online course banner"
+                  />
                 </div>
-              </Link>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2" />
+          <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2" />
+        </Carousel>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 md:px-6 md:py-12">
+        {/* Featured Courses */}
+        <section className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline">
+              Featured Courses
+            </h2>
+            <Button asChild variant="outline">
+              <Link href="/courses">View All</Link>
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {featuredCourses.map((course) => (
+              <CourseCard key={course.id} course={course} />
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </section>
+
+        {/* Categories Section (Example) */}
+        <section>
+          <h2 className="text-2xl md:text-3xl font-bold font-headline mb-6 text-center">
+            Explore by Category
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button variant="secondary" size="lg">Web Development</Button>
+            <Button variant="secondary" size="lg">Web Design</Button>
+            <Button variant="secondary" size="lg">Full-stack</Button>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
