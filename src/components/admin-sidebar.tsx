@@ -71,7 +71,7 @@ export function AdminSidebar() {
       <SidebarFooter className={cn("p-2", !open && "items-center")}>
          <SidebarMenu>
              <SidebarMenuItem>
-                <Link href="/">
+                <Link href="/admin/auth/login">
                     <SidebarMenuButton icon={<LogOut />} tooltip="Logout">
                          <span className={cn(!open && "hidden")}>Logout</span>
                     </SidebarMenuButton>

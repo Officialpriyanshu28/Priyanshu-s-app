@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Laptop, Smartphone, LogOut, Award, Trophy, Crown } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 const mockDevices = [
     { id: 'device-1', type: 'Laptop', name: 'Chrome on macOS', location: 'New York, USA', isCurrent: true },
@@ -37,6 +38,7 @@ const mockLeaderboard = [
 
 export default function ProfilePage() {
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleUpdate = (e: React.FormEvent, section: string) => {
     e.preventDefault();
@@ -44,6 +46,15 @@ export default function ProfilePage() {
       title: "Profile Updated",
       description: `Your ${section.toLowerCase()} has been updated.`,
     });
+  }
+
+  const handleLogout = () => {
+    // In a real app, this would clear tokens/session
+    toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out."
+    });
+    router.push('/auth/login');
   }
 
   return (
@@ -140,7 +151,7 @@ export default function ProfilePage() {
           </div>
 
            <div className="space-y-4 border-t pt-6 flex justify-end">
-             <Button variant="destructive">Logout from All Devices</Button>
+             <Button variant="destructive" onClick={handleLogout}>Logout from All Devices</Button>
            </div>
         </CardContent>
       </Card>
