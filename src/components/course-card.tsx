@@ -12,14 +12,17 @@ import {
 import { Badge } from '@/components/ui/badge';
 import type { Course } from '@/lib/types';
 import { Button } from './ui/button';
+import { Progress } from './ui/progress';
 
 interface CourseCardProps {
   course: Course;
   isPurchased?: boolean;
+  withProgressBar?: boolean;
 }
 
-export default function CourseCard({ course, isPurchased = false }: CourseCardProps) {
+export default function CourseCard({ course, isPurchased = false, withProgressBar = false }: CourseCardProps) {
   const discount = Math.round(((course.mrp - course.price) / course.mrp) * 100);
+  const progress = Math.floor(Math.random() * 60) + 10; // Mock progress
 
   return (
     <div className="group relative block h-full">
@@ -35,11 +38,17 @@ export default function CourseCard({ course, isPurchased = false }: CourseCardPr
             />
           </div>
         </CardHeader>
-        <CardContent className="flex-grow p-4">
-          <CardTitle className="mb-2 line-clamp-2 text-lg font-bold font-headline">
+        <CardContent className="flex flex-col flex-grow p-4">
+          <Badge variant="outline" className="mb-2 w-fit">{course.category}</Badge>
+          <CardTitle className="mb-2 line-clamp-2 text-lg font-bold font-headline flex-grow">
             {course.title}
           </CardTitle>
-          <Badge variant="outline">{course.category}</Badge>
+           {isPurchased && withProgressBar && (
+             <div className="mt-auto space-y-2">
+                <Progress value={progress} className="h-2" />
+                <p className="text-xs text-muted-foreground">{progress}% complete</p>
+             </div>
+           )}
         </CardContent>
         {!isPurchased && (
            <CardFooter className="flex items-center justify-between p-4 pt-0">
