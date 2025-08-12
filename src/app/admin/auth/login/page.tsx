@@ -23,9 +23,10 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Securely compare with environment variables
-    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+    // Default credentials for easy testing.
+    // For production, use environment variables for security.
+    const adminEmail = "admin@example.com";
+    const adminPassword = "admin123";
 
     if (email === adminEmail && password === adminPassword) {
       toast({ title: "Login Successful", description: "Redirecting to admin dashboard..." });
