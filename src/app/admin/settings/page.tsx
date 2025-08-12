@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function AdminSettingsPage() {
   const { toast } = useToast();
 
-  const handleSaveChanges = (e: React.MouseEvent<HTMLButtonElement>, section: string) => {
+  const handleSaveChanges = (e: React.MouseEvent<HTMLButtonElement> | React.FormEvent<HTMLFormElement>, section: string) => {
     e.preventDefault();
     toast({
       title: "Settings Saved",
@@ -41,7 +41,7 @@ export default function AdminSettingsPage() {
           <CardDescription>Manage general site settings.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-         <form>
+         <form onSubmit={(e) => handleSaveChanges(e, 'General')}>
             <div className="space-y-2">
                 <Label htmlFor="site-name">Site Name</Label>
                 <Input id="site-name" defaultValue="Priyanshu's app" />
@@ -53,7 +53,7 @@ export default function AdminSettingsPage() {
                 defaultValue="A Next.js app built in Firebase Studio."
                 />
             </div>
-            <Button className="mt-4" onClick={(e) => handleSaveChanges(e, 'General')}>Save Changes</Button>
+            <Button type="submit" className="mt-4">Save Changes</Button>
          </form>
         </CardContent>
       </Card>
@@ -63,7 +63,7 @@ export default function AdminSettingsPage() {
           <CardDescription>Customize the look and feel of your app.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form>
+          <form onSubmit={(e) => handleSaveChanges(e, 'Appearance')}>
             <div className="space-y-2">
                 <Label htmlFor="theme">Theme</Label>
                 <Select defaultValue="light">
@@ -77,7 +77,7 @@ export default function AdminSettingsPage() {
                     </SelectContent>
                 </Select>
             </div>
-            <Button className="mt-4" onClick={(e) => handleSaveChanges(e, 'Appearance')}>Save Changes</Button>
+            <Button type="submit" className="mt-4">Save Changes</Button>
           </form>
         </CardContent>
       </Card>

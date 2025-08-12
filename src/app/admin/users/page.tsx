@@ -45,8 +45,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-  DialogClose
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
@@ -63,11 +61,11 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState(initialUsers);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const { toast } = useToast();
 
   const handleRoleChange = (userId: string, newRole: string) => {
-    // In a real app, this would be an API call
-    setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
+    setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as User['role'] } : u));
     toast({
       title: "User Updated",
       description: `The user's role has been changed to ${newRole}.`,
@@ -76,16 +74,27 @@ export default function AdminUsersPage() {
   };
 
   const handleDeleteUser = (userId: string) => {
-    // In a real app, this would be an API call
     setUsers(users.filter(u => u.id !== userId));
     toast({
       title: "User Deleted",
       description: "The user has been successfully deleted.",
       variant: "destructive",
     });
+    setIsDeleteAlertOpen(false);
+  };
+
+  const openEditDialog = (user: User) => {
+    setSelectedUser(user);
+    setIsEditOpen(true);
+  };
+
+  const openDeleteDialog = (user: User) => {
+    setSelectedUser(user);
+    setIsDeleteAlertOpen(true);
   };
 
   return (
+     <>
      <Card>
         <CardHeader>
           <CardTitle>Users</CardTitle>
@@ -111,7 +120,7 @@ export default function AdminUsersPage() {
                 <TableRow key={user.id}>
                   <TableCell className="font-medium flex items-center gap-3">
                     <Avatar>
-                        <AvatarImage src={user.avatar} />
+                        <AvatarImage src={user.avatar} alt={user.name} />
                         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div>
@@ -125,78 +134,24 @@ export default function AdminUsersPage() {
                   </TableCell>
                   <TableCell>{user.joined}</TableCell>
                   <TableCell>
-                    <Dialog open={isEditOpen && selectedUser?.id === user.id} onOpenChange={(open) => { if (!open) setSelectedUser(null); setIsEditOpen(open); }}>
-                       <AlertDialog>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button aria-haspopup="true" size="icon" variant="ghost">
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Toggle menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DialogTrigger asChild>
-                                  <DropdownMenuItem onSelect={() => {setSelectedUser(user); setIsEditOpen(true)}}>
-                                    Edit Role
-                                  </DropdownMenuItem>
-                              </DialogTrigger>
-                              <DropdownMenuSeparator />
-                               <AlertDialogTrigger asChild>
-                                <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
-                                    Delete
-                                </DropdownMenuItem>
-                               </AlertDialogTrigger>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-
-                          <DialogContent>
-                              <DialogHeader>
-                                  <DialogTitle>Edit User Role</DialogTitle>
-                                  <DialogDescription>
-                                      Change the role for {selectedUser?.name}.
-                                  </DialogDescription>
-                              </DialogHeader>
-                               <div className="py-4">
-                                <Label htmlFor="role" className="mb-2 block">Role</Label>
-                                <Select defaultValue={selectedUser?.role} onValueChange={(newRole) => {
-                                   if (selectedUser) {
-                                     handleRoleChange(selectedUser.id, newRole)
-                                   }
-                                }}>
-                                    <SelectTrigger id="role">
-                                        <SelectValue placeholder="Select a role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Admin">Admin</SelectItem>
-                                        <SelectItem value="Student">Student</SelectItem>
-                                        <SelectItem value="Instructor">Instructor</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                               </div>
-                              <DialogFooter>
-                                  <DialogClose asChild>
-                                     <Button variant="outline">Cancel</Button>
-                                  </DialogClose>
-                              </DialogFooter>
-                          </DialogContent>
-                          
-                          <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This action cannot be undone. This will permanently delete the user account.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDeleteUser(user.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                          </AlertDialogContent>
-                      </AlertDialog>
-                    </Dialog>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem onSelect={() => openEditDialog(user)}>
+                            Edit Role
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                           <DropdownMenuItem onSelect={() => openDeleteDialog(user)} className="text-destructive">
+                                Delete
+                           </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
@@ -204,5 +159,66 @@ export default function AdminUsersPage() {
           </Table>
         </CardContent>
       </Card>
+      
+      {/* Edit Dialog */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit User Role</DialogTitle>
+            <DialogDescription>
+              Change the role for {selectedUser?.name}.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="role" className="mb-2 block">Role</Label>
+            <Select 
+              defaultValue={selectedUser?.role} 
+              onValueChange={(newRole) => {
+                if (selectedUser) {
+                  handleRoleChange(selectedUser.id, newRole)
+                }
+              }}
+            >
+              <SelectTrigger id="role">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="Student">Student</SelectItem>
+                <SelectItem value="Instructor">Instructor</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Delete Alert Dialog */}
+      <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the user account for {selectedUser?.name}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (selectedUser) {
+                  handleDeleteUser(selectedUser.id)
+                }
+              }} 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+     </>
   );
 }
