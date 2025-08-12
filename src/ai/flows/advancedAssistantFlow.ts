@@ -11,6 +11,7 @@
 import { ai } from '@/ai/genkit';
 import { generate } from 'genkit';
 import { z } from 'zod';
+import { googleAI } from '@genkit-ai/googleai';
 
 const ChatMessageSchema = z.object({
   role: z.enum(['user', 'model']),
@@ -118,13 +119,12 @@ const advancedAssistantFlow = ai.defineFlow(
   },
   async (input) => {
     // Dynamically create a model instance with the user's API key.
-    const model = ai.model('googleai/gemini-1.5-flash-latest', {
-      auth: { apiKey: input.apiKey || process.env.GEMINI_API_KEY || '' },
-    });
-
     const { output } = await generate({
         prompt: await assistantPrompt.render(input),
-        model,
+        model: googleAI.model('gemini-1.5-flash-latest'),
+        config: {
+            auth: { apiKey: input.apiKey || process.env.GEMINI_API_KEY || '' }
+        }
     });
     
     return output?.text ?? "Sorry, I couldn't process your request. Please try again.";
