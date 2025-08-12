@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -19,14 +19,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Bot, Image as ImageIcon, FileText, Code, Sparkles, Loader2 } from 'lucide-react';
-import { advancedAssistant, AdvancedAssistantInput } from '@/ai/flows/advancedAssistantFlow';
+import { Bot, Image as ImageIcon, FileText, Code, Sparkles, Loader2, Send, MessageSquare } from 'lucide-react';
+import { advancedAssistant, AdvancedAssistantInput, ChatMessage } from '@/ai/flows/advancedAssistantFlow';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function AiAssistantPage() {
-  const [activeTab, setActiveTab] = useState('image_solver');
-  const [mode, setMode] = useState<AdvancedAssistantInput['mode']>('image_solver');
+  const [activeTab, setActiveTab] = useState('chat');
+  const [mode, setMode] = useState<AdvancedAssistantInput['mode']>('chat');
   const [question, setQuestion] = useState('');
   const [image, setImage] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -34,7 +37,20 @@ export default function AiAssistantPage() {
   const [text, setText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState('');
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const chatScrollAreaRef = useRef<HTMLDivElement>(null);
+
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (chatScrollAreaRef.current) {
+        chatScrollAreaRef.current.scrollTo({
+            top: chatScrollAreaRef.current.scrollHeight,
+            behavior: 'smooth'
+        });
+    }
+  }, [chatHistory, isLoading]);
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -67,7 +83,7 @@ export default function AiAssistantPage() {
         toast({ variant: 'destructive', title: 'Please enter some text.' });
         return;
       }
-      input.question = text; // Use question field for text
+      input.question = text; 
       hasInput = true;
     } else if (modeToUse === 'code_doctor') {
       if (!code) {
@@ -76,6 +92,16 @@ export default function AiAssistantPage() {
       }
       input.code = code;
       hasInput = true;
+    } else if (modeToUse === 'chat') {
+        if (!question) {
+            toast({ variant: 'destructive', title: 'Please enter a message.' });
+            return;
+        }
+        input.question = question;
+        input.chat_history = chatHistory;
+        hasInput = true;
+        setChatHistory(prev => [...prev, {role: 'user', content: question}]);
+        setQuestion('');
     }
 
     if (!hasInput) return;
@@ -84,13 +110,21 @@ export default function AiAssistantPage() {
     setResponse('');
     try {
       const result = await advancedAssistant(input);
-      setResponse(result);
+      if (modeToUse === 'chat') {
+        setChatHistory(prev => [...prev, {role: 'model', content: result}]);
+      } else {
+        setResponse(result);
+      }
     } catch (error) {
       console.error('AI Assistant Error:', error);
+      const errorMessage = 'Failed to get a response from the AI assistant.';
+      if (modeToUse === 'chat') {
+         setChatHistory(prev => [...prev, {role: 'model', content: `Sorry, an error occurred: ${errorMessage}`}]);
+      }
       toast({
         variant: 'destructive',
         title: 'An error occurred.',
-        description: 'Failed to get a response from the AI assistant.',
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);
@@ -99,7 +133,9 @@ export default function AiAssistantPage() {
   
   const handleTabChange = (newTab: string) => {
     setActiveTab(newTab);
+    
     // Set a default mode for the new tab
+    if (newTab === 'chat') setMode('chat');
     if (newTab === 'image_solver') setMode('image_solver');
     if (newTab === 'text_genius') setMode('text_genius_summary'); // Default to summary
     if (newTab === 'code_doctor') setMode('code_doctor');
@@ -111,6 +147,7 @@ export default function AiAssistantPage() {
     setText('');
     setImage(null);
     setImagePreview(null);
+    setChatHistory([]);
   }
   
   const handleTextGenSubmit = (textGenMode: 'text_genius_summary' | 'text_genius_mindmap') => {
@@ -130,6 +167,57 @@ export default function AiAssistantPage() {
         </Card>
     </div>
   );
+  
+  const ChatInterface = () => (
+    <Card className="flex flex-col h-[60vh]">
+        <CardHeader>
+            <CardTitle>Chat with AI</CardTitle>
+            <CardDescription>Ask me anything! I'm here to help you with your questions.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
+             <ScrollArea className="flex-1 pr-4" ref={chatScrollAreaRef}>
+                 <div className="space-y-4">
+                    {chatHistory.map((msg, index) => (
+                        <div key={index} className={cn("flex items-start gap-3", msg.role === 'user' ? 'justify-end' : '')}>
+                            {msg.role === 'model' && (
+                                <Avatar className="h-8 w-8">
+                                    <AvatarFallback><Bot className="h-5 w-5"/></AvatarFallback>
+                                </Avatar>
+                            )}
+                             <div className={cn("p-3 rounded-lg max-w-sm", msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
+                               <ReactMarkdown className="prose dark:prose-invert max-w-none break-words">
+                                {msg.content}
+                               </ReactMarkdown>
+                             </div>
+                        </div>
+                    ))}
+                    {isLoading && (
+                       <div className="flex items-start gap-3">
+                           <Avatar className="h-8 w-8">
+                                <AvatarFallback><Bot className="h-5 w-5"/></AvatarFallback>
+                            </Avatar>
+                            <div className="p-3 rounded-lg bg-muted flex items-center gap-2">
+                                <Loader2 className="h-4 w-4 animate-spin"/>
+                                Thinking...
+                            </div>
+                       </div>
+                    )}
+                 </div>
+             </ScrollArea>
+             <form className="flex items-center gap-2 border-t pt-4" onSubmit={(e) => { e.preventDefault(); handleSubmit('chat'); }}>
+                <Input 
+                    placeholder="Type your message..."
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    disabled={isLoading}
+                />
+                <Button type="submit" size="icon" disabled={isLoading}>
+                    <Send className="h-4 w-4" />
+                </Button>
+            </form>
+        </CardContent>
+    </Card>
+  )
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8 md:px-6">
@@ -139,16 +227,21 @@ export default function AiAssistantPage() {
           Advanced AI Assistant
         </h1>
         <p className="text-muted-foreground mt-2">
-          Your powerful assistant for solving problems, summarizing text, and fixing code.
+          Your powerful assistant for chat, solving problems, summarizing text, and fixing code.
         </p>
       </div>
 
-      <Tabs defaultValue="image_solver" onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="chat" onValueChange={handleTabChange} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="chat"><MessageSquare className="mr-2 h-4 w-4" /> Chat</TabsTrigger>
           <TabsTrigger value="image_solver"><ImageIcon className="mr-2 h-4 w-4" /> Image Solver</TabsTrigger>
           <TabsTrigger value="text_genius"><FileText className="mr-2 h-4 w-4" /> Text Genius</TabsTrigger>
           <TabsTrigger value="code_doctor"><Code className="mr-2 h-4 w-4" /> Code Doctor</TabsTrigger>
         </TabsList>
+        
+        <TabsContent value="chat">
+            <ChatInterface />
+        </TabsContent>
 
         <TabsContent value="image_solver">
           <Card>
@@ -224,9 +317,9 @@ export default function AiAssistantPage() {
         </div>
       )}
 
-      {isLoading && <div className="text-center p-8"><Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" /></div>}
+      {isLoading && activeTab !== 'chat' && <div className="text-center p-8"><Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" /></div>}
 
-      {response && renderResponse()}
+      {response && activeTab !== 'chat' && renderResponse()}
     </div>
   );
 }

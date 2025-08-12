@@ -10,9 +10,14 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
+const ChatMessageSchema = z.object({
+  role: z.enum(['user', 'model']),
+  content: z.string(),
+});
+
 const AdvancedAssistantInputSchema = z.object({
-  mode: z.enum(['image_solver', 'text_genius_summary', 'text_genius_mindmap', 'code_doctor']),
-  question: z.string().optional().describe('The user\'s question or text input.'),
+  mode: z.enum(['image_solver', 'text_genius_summary', 'text_genius_mindmap', 'code_doctor', 'chat']),
+  question: z.string().optional().describe("The user's question or text input."),
   image: z
     .string()
     .optional()
@@ -20,10 +25,12 @@ const AdvancedAssistantInputSchema = z.object({
       "A photo of a question or a problem, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
   code: z.string().optional().describe('A code snippet that might contain errors.'),
+  chat_history: z.array(ChatMessageSchema).optional().describe('The history of the conversation.'),
 });
 
 export type AdvancedAssistantInput = z.infer<typeof AdvancedAssistantInputSchema>;
 export type AdvancedAssistantOutput = string;
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export async function advancedAssistant(input: AdvancedAssistantInput): Promise<AdvancedAssistantOutput> {
   return advancedAssistantFlow(input);
@@ -79,6 +86,23 @@ Code to analyze:
 \`\`\`
 {{{code}}}
 \`\`\`
+{{/if}}
+
+{{#if (eq mode "chat")}}
+You are a helpful and friendly AI chat assistant.
+Continue the conversation based on the provided history.
+Be concise and helpful.
+
+{{#if chat_history}}
+Conversation History:
+{{#each chat_history}}
+**{{role}}**: {{{content}}}
+{{/each}}
+{{/if}}
+
+Current question:
+**user**: {{{question}}}
+**model**:
 {{/if}}
 `,
 });
