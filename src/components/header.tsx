@@ -13,7 +13,6 @@ import {
 import { Button } from '@/components/ui/button';
 import Logo from './logo';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -24,16 +23,9 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
-  // Mock authentication state - assume user is not logged in by default
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  useEffect(() => {
-    // In a real app, you'd check for a token in localStorage here
-    // For now, we'll keep it simple and assume logged out.
-    // To test the logged-in state, you can manually set this to true.
-    // setIsAuthenticated(true); 
-  }, []);
-
+  // Authentication state is now handled by always showing the login button
+  // for non-authenticated users, which is the default state.
+  const isAuthenticated = false; 
 
   const NavLink = ({ href, label }: { href: string; label: string }) => {
     const isActive = pathname === href;
