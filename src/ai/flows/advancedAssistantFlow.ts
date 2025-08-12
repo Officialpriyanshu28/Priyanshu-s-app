@@ -9,7 +9,6 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { generate } from 'genkit';
 import { z } from 'zod';
 
 const ChatMessageSchema = z.object({
@@ -125,9 +124,6 @@ const advancedAssistantFlow = ai.defineFlow(
   },
   async (input) => {
     
-    // The issue was that Handlebars helpers like 'eq' are not enabled by default.
-    // The prompt has been refactored to use simple '#if' blocks which check for the presence of a key.
-    // To make this work, we only pass the relevant data for the current mode to the prompt.
     let promptData: any = {
       question: input.question,
     };
@@ -151,7 +147,7 @@ const advancedAssistantFlow = ai.defineFlow(
     // Render the prompt with the correct data
     const renderedPrompt = await assistantPrompt.render(promptData);
 
-    const { output } = await generate({
+    const { output } = await ai.generate({
         prompt: renderedPrompt.prompt, // Pass the rendered prompt string
         model: 'gemini-1.5-flash-latest'
     });
