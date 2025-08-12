@@ -8,7 +8,7 @@ export const banners: Banner[] = [
 ];
 
 const placeholderVideoUrl = 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-const placeholderPdfUrl = '/notes/sample-notes.pdf';
+const placeholderPdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
 export const liveClasses: LiveClass[] = [
     {
@@ -57,6 +57,7 @@ export const courses: Course[] = [
         videos: [
           { id: 'vid1_1', title: 'Course Overview', duration: '5:30', url: placeholderVideoUrl },
           { id: 'vid1_2', title: 'Setting up your environment', duration: '12:15', url: placeholderVideoUrl },
+           { id: 'vid1_3', title: 'Your First Page', duration: '9:45', url: placeholderVideoUrl },
         ],
         notes: [
           { id: 'note1_1', title: 'Chapter 1 Notes', url: placeholderPdfUrl },
@@ -143,7 +144,25 @@ export const courses: Course[] = [
         ],
         notes: [
            { id: 'note_tw_1', title: 'Tailwind Cheatsheet', url: placeholderPdfUrl },
-        ]
+        ],
+        quiz: {
+            id: 'quiz_tw_1',
+            title: 'Tailwind Basics',
+            timeLimitMinutes: 1,
+            questions: [
+                 {
+                    id: 'q_tw_1',
+                    text: 'Which directive is used to include Tailwind\'s base styles?',
+                    options: [
+                        { id: 'opt_tw_1', text: '@tailwind components' },
+                        { id: 'opt_tw_2', text: '@tailwind base' },
+                        { id: 'opt_tw_3', text: '@tailwind utilities' },
+                    ],
+                    correctOptionId: 'opt_tw_2',
+                    explanation: '@tailwind base is used to inject Tailwind\'s base styles and any base styles registered by plugins.'
+                }
+            ]
+        }
       },
     ],
   },
@@ -164,7 +183,13 @@ export const courses: Course[] = [
         videos: [
           { id: 'vid1_1_r', title: 'JSX and Components', duration: '20:10', url: placeholderVideoUrl },
         ],
-        notes: []
+        notes: [],
+        quiz: {
+            id: 'quiz_r_1',
+            title: 'React Fundamentals Quiz',
+            timeLimitMinutes: 1,
+            questions: []
+        }
       },
     ],
   },

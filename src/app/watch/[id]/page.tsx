@@ -59,6 +59,7 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 
     videoElement.addEventListener('loadeddata', handleLoadedData);
 
+    // Initial check
     handleLoadedData();
 
     return () => {
@@ -81,9 +82,6 @@ function WatchPageClient({ courseId }: { courseId: string }) {
 
   const handleDownload = async (url: string, filename: string) => {
     try {
-      // For mock data, we can directly use the provided URL if it's external
-      // or create a downloadable link if it's a local path.
-      // This implementation simulates fetching and downloading.
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Network response was not ok');

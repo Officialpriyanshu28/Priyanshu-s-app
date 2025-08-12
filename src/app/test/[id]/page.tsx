@@ -9,6 +9,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -109,7 +110,7 @@ export default function TestPlayerPage() {
   
   const handleFinishTest = (submitted = false) => {
     setIsFinished(true);
-    if (submitted) {
+    if (submitted && selectedOption) {
         // If the user submits manually, process the last answer
         const currentQuestion = quiz.questions[currentQuestionIndex];
         const isCorrect = selectedOption === currentQuestion.correctOptionId;

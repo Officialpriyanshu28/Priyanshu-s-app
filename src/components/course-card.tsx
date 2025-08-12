@@ -44,9 +44,9 @@ export default function CourseCard({ course, isPurchased = false }: CourseCardPr
         {!isPurchased && (
            <CardFooter className="flex items-center justify-between p-4 pt-0">
                 <div className="flex items-baseline gap-2">
-                    <p className="text-xl font-bold text-primary">{course.price}</p>
+                    <p className="text-xl font-bold text-primary">₹{course.price}</p>
                     <p className="text-sm text-muted-foreground line-through">
-                    {course.mrp}
+                    ₹{course.mrp}
                     </p>
                 </div>
                 {discount > 0 && (
